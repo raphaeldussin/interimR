@@ -6,6 +6,14 @@ original_grib_dir = /t3/workdir/raphael/ERAinterim/grib/
 original_nc_dir   = /t3/workdir/raphael/ERAinterim/nc/
 processed_nc_dir  = /t3/workdir/raphael/ERAinterim/nc_processed/
 
+[RD-proteus]
+first_year        = 1979
+last_year         = 1979
+target_model      = ROMS
+original_grib_dir = /Volumes/P4/workdir/raphael/ERAinterim_roms/grib/
+original_nc_dir   = /Volumes/P4/workdir/raphael/ERAinterim_roms/nc/
+processed_nc_dir  = /Volumes/P4/workdir/raphael/ERAinterim_roms/nc_processed/
+
 [JMM-meolkerg]
 first_year =
 last_year =

@@ -35,8 +35,7 @@ for item in config.options(this_user):
 
 # Define the list of interesting variables with their associated parameter on MARS server
 ecmwf_param = {'u10' : '165.128', 'v10' : '166.128', 'd2' : '168.128' , 't2' : '167.128' , \
-                'msl' : '151.128', 'snow' : '144.128' , 'radsw' : '169.128' , 'radlw' : '175.128' , 'precip' : '228.128'  }
-#ecmwf_param = {'tcc' : '164.128'}
+                'msl' : '151.128', 'snow' : '144.128' , 'radsw' : '169.128' , 'radlw' : '175.128' , 'precip' : '228.128' , 'tcc' : '164.128'}
 
 # Choose years to download
 fyear = int(dict_ctl['first_year'])
