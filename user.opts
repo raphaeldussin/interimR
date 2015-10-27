@@ -1,0 +1,15 @@
+[RD-triton]
+first_year        = 2013
+last_year         = 2013
+target_model      = NEMO
+original_grib_dir = /t3/workdir/raphael/ERAinterim/grib/
+original_nc_dir   = /t3/workdir/raphael/ERAinterim/nc/
+processed_nc_dir  = /t3/workdir/raphael/ERAinterim/nc_processed/
+
+[JMM-meolkerg]
+first_year =
+last_year =
+target_model      = NEMO
+original_grib_dir = 
+original_nc_dir = 
+processed_nc_dir = 

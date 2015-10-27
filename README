@@ -1,0 +1,40 @@
+#-----------------------------------------------------------------------------------------------------
+# pre-req :
+
+1. A working python environment (including numpy, netCDF4)
+
+2. The ECMWFserver python package :
+
+doc : https://software.ecmwf.int/wiki/display/WEBAPI/Accessing+ECMWF+data+servers+in+batch
+
+in short, needs to register, install pip (if you don't have it already) then :
+sudo pip install https://software.ecmwf.int/wiki/download/attachments/47287906/ecmwf-api-client-python.tgz
+
+put key in .ecmwfapirc in $HOME
+
+3. cdo
+
+#-----------------------------------------------------------------------------------------------------
+# prepare fortran tools
+
+make
+
+#-----------------------------------------------------------------------------------------------------
+# setup your options
+
+edit user.opts and create an entry for your configuration
+you need to provide path to where you want to store the data,
+which years to process and for what is the target model (changes variable names,...)
+
+#-----------------------------------------------------------------------------------------------------
+# retrieve ERAinterim 
+
+./get_ERAinterim.py myentry
+
+# example ./get_ERAinterim.py RD-triton
+#-----------------------------------------------------------------------------------------------------
+# process ERAinterim (takes me 11min per year)
+
+./process_ERAinterim.py myentry
+
+# example ./process_ERAinterim.py RD-triton
