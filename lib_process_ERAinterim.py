@@ -17,6 +17,7 @@ class ERAinterim_processing():
 		self.spval = 1.0e+15
 		self.dataset = 'ERAinterim'
 		# read inputs
+		self.dict_input = dict_input
 		for key in dict_input:
                 	exec('self.' + key + '=dict_input[key]')
 		# set time related stuff
@@ -37,24 +38,36 @@ class ERAinterim_processing():
 		return None
 
 	def __call__(self):
-		print 'Processing precip file...'
-		self.process_precip_to_daily()
-		print 'Processing snow file...'
-		self.process_snow_to_daily()
-		print 'Processing longwave file...'
-		self.process_radlw_to_daily()
-		print 'Processing shortwave file...'
-		self.process_radsw_to_daily()
-		print 'Create specific humidity file...'
-		self.create_q2_file()
-		print 'Rewrite t2 file...'
-		self.process_t2_file()
-		print 'Rewrite msl file...'
-		self.process_msl_file()
-		print 'Rewrite u10 file...'
-		self.process_u10_file()
-		print 'Rewrite v10 file...'
-		self.process_v10_file()
+		if self.dict_input.has_key('file_precip'):
+			print 'Processing precip file...'
+			self.process_precip_to_daily()
+		if self.dict_input.has_key('file_snow'):
+			print 'Processing snow file...'
+			self.process_snow_to_daily()
+		if self.dict_input.has_key('file_radlw'):
+			print 'Processing longwave file...'
+			self.process_radlw_to_daily()
+		if self.dict_input.has_key('file_radsw'):
+			print 'Processing shortwave file...'
+			self.process_radsw_to_daily()
+		if self.dict_input.has_key('file_d2'):
+			print 'Create specific humidity file...'
+			self.create_q2_file()
+		if self.dict_input.has_key('file_t2'):
+			print 'Rewrite t2 file...'
+			self.process_t2_file()
+		if self.dict_input.has_key('file_msl'):
+			print 'Rewrite msl file...'
+			self.process_msl_file()
+		if self.dict_input.has_key('file_tcc'):
+			print 'Rewrite tcc file...'
+			self.process_tcc_file()
+		if self.dict_input.has_key('file_u10'):
+			print 'Rewrite u10 file...'
+			self.process_u10_file()
+		if self.dict_input.has_key('file_v10'):
+			print 'Rewrite v10 file...'
+			self.process_v10_file()
 		return None
 
 	#------------------ Meta functions ------------------------------------------
@@ -335,6 +348,33 @@ class ERAinterim_processing():
 	                self._write_ncfile(lon,lat,time,msl_out,my_dict)
 		return None
 
+	def process_tcc_file(self):
+		''' Rewrite pressure file according to model's needs '''
+		tcc_out = np.empty((self.nframes,self.ny,self.nx))
+                time = np.empty((self.nframes))
+                # open file
+                fid_tcc = self._opennc(self.file_tcc)
+                # read coordinates and time
+                lon = self._readnc(fid_tcc,'lon')
+                lat = self._readnc(fid_tcc,'lat')
+		# run the computation
+		for kt in np.arange(0,self.nframes):
+			tcc_out[kt,:,:] = self._readnc_oneframe(fid_tcc,'MSL',kt)
+			this_time = dt.datetime(self.year,1,1,0,0) + dt.timedelta(seconds=kt*86400/self.nframes_per_day)
+                        time[kt] = (this_time - self.reftime).days + (this_time - self.reftime).seconds / 86400.
+                # close file
+                self._closenc(fid_tcc)
+                # write file
+		if self.target_model == 'ROMS':
+	                my_dict = {'varname':'cloud','time_dim':'cloud_time','time_var':'cloud_time','long name':'Total cloud cover',\
+	                'units':'N/A','fileout':self.output_dir + 'tcc_' + self.dataset + '_' + str(self.year) + '_ROMS.nc'}
+	                self._write_ncfile(lon,lat[::-1],time,tcc_out[:,::-1,:],my_dict)
+		elif self.target_model == 'NEMO':
+	                my_dict = {'varname':'tcc','time_dim':'time','time_var':'time','long name':'Total cloud cover',\
+	                'units':'N/A','fileout':self.output_dir + 'tcc_' + self.dataset + '_' + str(self.year) + '.nc'}
+	                self._write_ncfile(lon,lat,time,tcc_out,my_dict)
+		return None
+
 	def process_u10_file(self):
 		''' Rewrite zonal wind file according to model's needs '''
 		u10_out = np.empty((self.nframes,self.ny,self.nx))
@@ -467,7 +507,6 @@ class ERAinterim_processing():
 	        fid.close()
 	        return None
 
-
 class ERAinterim_drown():
 
         def __init__(self,dict_input):
@@ -479,7 +518,7 @@ class ERAinterim_drown():
 			self.name_t2     = 'Tair'        ; self.name_time_t2     = 'tair_time'
 			self.name_q2     = 'Qair'        ; self.name_time_q2     = 'qair_time'
 			self.name_u10    = 'Uwind'       ; self.name_time_u10    = 'wind_time'
-			self.name_v10    = 'Wwind'       ; self.name_time_v10    = 'wind_time'
+			self.name_v10    = 'Vwind'       ; self.name_time_v10    = 'wind_time'
 			self.name_radsw  = 'swrad'       ; self.name_time_radsw  = 'srf_time'
 			self.name_radlw  = 'lwrad_down'  ; self.name_time_radlw  = 'lrf_time'
 			self.name_precip = 'rain'        ; self.name_time_precip = 'rain_time'
@@ -496,72 +535,32 @@ class ERAinterim_drown():
 			self.name_precip = 'precip'      ; self.name_time_precip = 'time'
 			self.name_snow   = 'snow'        ; self.name_time_snow   = 'time'
 			self.name_msl    = 'msl'         ; self.name_time_msl    = 'time'
+			self.name_tcc    = 'tcc'         ; self.name_time_tcc    = 'time'
 			self.drownexe    = 'mask_drown_field.x'
                 return None
 
 	def __call__(self):
 
-		#--- t2 ---
-		filetmp = self.file_t2.replace('/',' ').split()[-1]
-		fileout = 'drowned_' + filetmp
-		command = self.sosie_dir + self.drownexe + ' -D -i ' + self.file_t2 + ' -v ' + self.name_t2 + ' -t ' + self.name_time_t2 + \
-                          ' -w ' + self.name_time_t2 + ' -m ' + self.lsm_file + ' -o ' + self.output_dir + fileout
-		os.system(command)
-
-		#--- q2 ---
-		filetmp = self.file_q2.replace('/',' ').split()[-1]
-		fileout = 'drowned_' + filetmp
-		command = self.sosie_dir + self.drownexe + ' -D -i ' + self.file_q2 + ' -v ' + self.name_q2 + ' -t ' + self.name_time_q2 + \
-                          ' -w ' + self.name_time_q2 + ' -m ' + self.lsm_file + ' -o ' + self.output_dir + fileout
-		os.system(command)
-
-		#--- u10 ---
-		filetmp = self.file_u10.replace('/',' ').split()[-1]
-		fileout = 'drowned_' + filetmp
-		command = self.sosie_dir + self.drownexe + ' -D -i ' + self.file_u10 + ' -v ' + self.name_u10 + ' -t ' + self.name_time_u10 + \
-                          ' -w ' + self.name_time_u10 + ' -m ' + self.lsm_file + ' -o ' + self.output_dir + fileout
-		os.system(command)
-
-		#--- v10 ---
-		filetmp = self.file_v10.replace('/',' ').split()[-1]
-		fileout = 'drowned_' + filetmp
-		command = self.sosie_dir + self.drownexe + ' -D -i ' + self.file_v10 + ' -v ' + self.name_v10 + ' -t ' + self.name_time_v10 + \
-                          ' -w ' + self.name_time_v10 + ' -m ' + self.lsm_file + ' -o ' + self.output_dir + fileout
-		os.system(command)
-
-		#--- radsw ---
-		filetmp = self.file_radsw.replace('/',' ').split()[-1]
-		fileout = 'drowned_' + filetmp
-		command = self.sosie_dir + self.drownexe + ' -D -i ' + self.file_radsw + ' -v ' + self.name_radsw + ' -t ' + self.name_time_radsw + \
-                          ' -w ' + self.name_time_radsw + ' -m ' + self.lsm_file + ' -o ' + self.output_dir + fileout
-		os.system(command)
-
-		#--- radlw ---
-		filetmp = self.file_radlw.replace('/',' ').split()[-1]
-		fileout = 'drowned_' + filetmp
-		command = self.sosie_dir + self.drownexe + ' -D -i ' + self.file_radlw + ' -v ' + self.name_radlw + ' -t ' + self.name_time_radlw + \
-                          ' -w ' + self.name_time_radlw + ' -m ' + self.lsm_file + ' -o ' + self.output_dir + fileout
-		os.system(command)
-
-		#--- precip ---
-		filetmp = self.file_precip.replace('/',' ').split()[-1]
-		fileout = 'drowned_' + filetmp
-		command = self.sosie_dir + self.drownexe + ' -D -i ' + self.file_precip + ' -v ' + self.name_precip + ' -t ' + self.name_time_precip + \
-                          ' -w ' + self.name_time_precip + ' -m ' + self.lsm_file + ' -o ' + self.output_dir + fileout
-		os.system(command)
-
-		#--- snow ---
-		filetmp = self.file_snow.replace('/',' ').split()[-1]
-		fileout = 'drowned_' + filetmp
-		command = self.sosie_dir + self.drownexe + ' -D -i ' + self.file_snow + ' -v ' + self.name_snow + ' -t ' + self.name_time_snow + \
-                          ' -w ' + self.name_time_snow + ' -m ' + self.lsm_file + ' -o ' + self.output_dir + fileout
-		os.system(command)
-
-		#--- msl ---
-		filetmp = self.file_msl.replace('/',' ').split()[-1]
-		fileout = 'drowned_' + filetmp
-		command = self.sosie_dir + self.drownexe + ' -D -i ' + self.file_msl + ' -v ' + self.name_msl + ' -t ' + self.name_time_msl + \
-                          ' -w ' + self.name_time_msl + ' -m ' + self.lsm_file + ' -o ' + self.output_dir + fileout
-		os.system(command)
-
+		for var in self.listvar:
+			exec('filein = self.file_' + var)
+			exec('varin = self.name_' + var)
+			exec('timevar = self.name_time_' + var)
+			command = self.create_drown_command(filein,varin,timevar)
+			os.system(command)
 		return None
+
+	def _fileout_name(self,filein):
+		filetmp = filein.replace('/',' ').split()[-1]
+		fileout = 'drowned_' + filetmp
+		return fileout
+
+	def create_drown_command(self,filein,varin,timevar):
+		fileout = self._fileout_name(filein)
+		if self.target_model == 'ROMS':
+			command = self.sosie_dir + self.drownexe + ' -D -i ' + filein + ' -v ' + varin + ' -t ' + timevar + \
+			' -w ' + timevar + ' -m ' + self.lsm_file + ' -o ' + self.output_dir + fileout
+		else:
+			command = self.sosie_dir + self.drownexe + ' -D -i ' + filein + ' -v ' + varin + ' -t ' + timevar + \
+			' -m ' + self.lsm_file + ' -o ' + self.output_dir + fileout
+		return command
+

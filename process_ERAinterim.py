@@ -35,6 +35,7 @@ for year in np.arange(fyear,lyear+1):
 	             'file_precip': dict_ctl['original_nc_dir'] + 'precip_ERAinterim_' + str(year) + '.nc', \
 	             'file_snow':   dict_ctl['original_nc_dir'] + 'snow_ERAinterim_'   + str(year) + '.nc', \
 	             'file_msl':    dict_ctl['original_nc_dir'] + 'msl_ERAinterim_'    + str(year) + '.nc', \
+	             'file_tcc':    dict_ctl['original_nc_dir'] + 'tcc_ERAinterim_'    + str(year) + '.nc', \
 	             'output_dir':  dict_ctl['processed_nc_dir']                                          , \
 	             'target_model':dict_ctl['target_model']                                              , \
 	             'year':year, 'ncumul':4, 'nx':512, 'ny':256, 'freq':'3h'}

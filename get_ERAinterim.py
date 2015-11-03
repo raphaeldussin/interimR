@@ -65,7 +65,7 @@ for year in np.arange(fyear,lyear+1):
 		    'target'    : filegrib
 		})
 
-		# comand to run to convert to NC will be : 
+		# comand to run to convert to NC : 
 		convert_to_nc='cdo -R -t ecmwf -f nc -r copy ' + filegrib + ' ' + filenc
 		os.system(convert_to_nc)
 
