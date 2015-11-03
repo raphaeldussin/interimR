@@ -103,6 +103,7 @@ class ERAinterim_processing():
 			my_dict = {'varname':'precip','time_dim':'time','time_var':'time','long name':'Total Precipitation',\
 			'units':'kg.m-2.s-1','fileout':self.output_dir + 'precip_' + self.dataset + '_' + str(self.year) + '.nc'}
 			self._write_ncfile(lon,lat,time,precip_out,my_dict)
+		precip_out = None
 		return None
 		
 	def process_precip_to_daily(self):
@@ -144,6 +145,7 @@ class ERAinterim_processing():
 			my_dict = {'varname':'precip','time_dim':'time','time_var':'time','long name':'Total Precipitation',\
 			'units':'kg.m-2.s-1','fileout':self.output_dir + 'precip_' + self.dataset + '_' + str(self.year) + '_daily.nc'}
 			self._write_ncfile(lon,lat,time,precip_out,my_dict)
+		precip_out = None
 		return None
 
         def process_snow_to_daily(self):
@@ -184,6 +186,7 @@ class ERAinterim_processing():
                 	my_dict = {'varname':'snow','time_dim':'time','time_var':'time','long name':'Snow Fall',\
  	               'units':'kg.m-2.s-1','fileout':self.output_dir + 'snow_' + self.dataset + '_' + str(self.year) + '_daily.nc'}
 			self._write_ncfile(lon,lat,time,snow_out,my_dict)
+		snow_out = None
                 return None
 
         def process_radlw_to_daily(self):
@@ -222,6 +225,7 @@ class ERAinterim_processing():
 	                my_dict = {'varname':'radlw','time_dim':'time','time_var':'time','long name':'Downwelling longwave radiation',\
 	                'units':'W.m-2','fileout':self.output_dir + 'radlw_' + self.dataset + '_' + str(self.year) + '_daily.nc'}
        		        self._write_ncfile(lon,lat,time,radlw_out,my_dict)
+		radlw_out = None
                 return None
 
         def process_radsw_to_daily(self):
@@ -260,6 +264,7 @@ class ERAinterim_processing():
 	                my_dict = {'varname':'radsw','time_dim':'time','time_var':'time','long name':'Shortwave radiation',\
 	                'units':'W.m-2','fileout':self.output_dir + 'radsw_' + self.dataset + '_' + str(self.year) + '_daily.nc'}
 	                self._write_ncfile(lon,lat,time,radsw_out,my_dict)
+		radsw_out = None
                 return None
 
 	def create_q2_file(self):
@@ -292,6 +297,7 @@ class ERAinterim_processing():
 	                my_dict = {'varname':'q2','time_dim':'time','time_var':'time','long name':'Specific humidity at 2m',\
 	                'units':'kg/kg','fileout':self.output_dir + 'q2_' + self.dataset + '_' + str(self.year) + '.nc'}
 	                self._write_ncfile(lon,lat,time,q2_out,my_dict)
+		q2_out = None
                 return None
 
 	def process_t2_file(self):
@@ -319,6 +325,7 @@ class ERAinterim_processing():
 	                my_dict = {'varname':'t2','time_dim':'time','time_var':'time','long name':'Air Temperature at 2m',\
 	                'units':'degC','fileout':self.output_dir + 't2_' + self.dataset + '_' + str(self.year) + '.nc'}
 	                self._write_ncfile(lon,lat,time,t2_out,my_dict)
+		t2_out = None
                 return None
 
 	def process_msl_file(self):
@@ -346,6 +353,7 @@ class ERAinterim_processing():
 	                my_dict = {'varname':'msl','time_dim':'time','time_var':'time','long name':'Mean sea-level pressure',\
 	                'units':'Pa','fileout':self.output_dir + 'msl_' + self.dataset + '_' + str(self.year) + '.nc'}
 	                self._write_ncfile(lon,lat,time,msl_out,my_dict)
+		msl_out = None
 		return None
 
 	def process_tcc_file(self):
@@ -373,6 +381,7 @@ class ERAinterim_processing():
 	                my_dict = {'varname':'tcc','time_dim':'time','time_var':'time','long name':'Total cloud cover',\
 	                'units':'N/A','fileout':self.output_dir + 'tcc_' + self.dataset + '_' + str(self.year) + '.nc'}
 	                self._write_ncfile(lon,lat,time,tcc_out,my_dict)
+		tcc_out = None
 		return None
 
 	def process_u10_file(self):
@@ -400,6 +409,7 @@ class ERAinterim_processing():
 	                my_dict = {'varname':'u10','time_dim':'time','time_var':'time','long name':'Zonal wind speed at 10m',\
 	                'units':'m/s','fileout':self.output_dir + 'u10_' + self.dataset + '_' + str(self.year) + '.nc'}
 	                self._write_ncfile(lon,lat,time,u10_out,my_dict)
+		u10_out = None
 		return None
 
 	def process_v10_file(self):
@@ -427,6 +437,7 @@ class ERAinterim_processing():
 	                my_dict = {'varname':'v10','time_dim':'time','time_var':'time','long name':'Meridional wind speed at 10m',\
 	                'units':'m/s','fileout':self.output_dir + 'v10_' + self.dataset + '_' + str(self.year) + '.nc'}
 	                self._write_ncfile(lon,lat,time,v10_out,my_dict)
+		v10_out = None
 		return None
 
 	#------------------ compute functions ------------------------------------------
