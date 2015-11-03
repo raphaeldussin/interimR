@@ -1,0 +1,4 @@
+#!/bin/bash
+
+#./process_ERAinterim.py RD-proteus
+./drown_ERAinterim.py RD-proteus
