@@ -127,7 +127,7 @@ class ERAinterim_processing():
 				tmp = tmp + self._readnc_oneframe(fid_precip,'TP',kframe-1) # C indexing hence -1
 
 			precip_out[kt,:,:] = tmp.copy()
-			this_day = dt.datetime(self.year,1,1,12,0) + dt.timedelta(days=kt)
+			this_day = dt.datetime(self.year,1,1,12,0) + dt.timedelta(days=int(kt))
 			time[kt] = (this_day - self.reftime).days + (this_day - self.reftime).seconds / 86400.
 		# close file
 		self._closenc(fid_precip)
@@ -168,7 +168,7 @@ class ERAinterim_processing():
                                 kframe = (kt * self.nframes_per_day) + (kc+1) * self.ncumul
                                 tmp = tmp + self._readnc_oneframe(fid_snow,'SF',kframe-1) # C indexing hence -1
                         snow_out[kt,:,:] = tmp.copy()
-                        this_day = dt.datetime(self.year,1,1,12,0) + dt.timedelta(days=kt)
+                        this_day = dt.datetime(self.year,1,1,12,0) + dt.timedelta(days=int(kt))
                         time[kt] = (this_day - self.reftime).days + (this_day - self.reftime).seconds / 86400.
                 # close file
                 self._closenc(fid_snow)
@@ -209,7 +209,7 @@ class ERAinterim_processing():
                                 kframe = (kt * self.nframes_per_day) + (kc+1) * self.ncumul
                                 tmp = tmp + self._readnc_oneframe(fid_radlw,'STRD',kframe-1) # C indexing hence -1
                         radlw_out[kt,:,:] = tmp.copy()
-                        this_day = dt.datetime(self.year,1,1,12,0) + dt.timedelta(days=kt)
+                        this_day = dt.datetime(self.year,1,1,12,0) + dt.timedelta(days=int(kt))
                         time[kt] = (this_day - self.reftime).days + (this_day - self.reftime).seconds / 86400.
                 # close file
                 self._closenc(fid_radlw)
@@ -248,7 +248,7 @@ class ERAinterim_processing():
                                 kframe = (kt * self.nframes_per_day) + (kc+1) * self.ncumul
                                 tmp = tmp + self._readnc_oneframe(fid_radsw,'SSRD',kframe-1) # C indexing hence -1
                         radsw_out[kt,:,:] = tmp.copy()
-                        this_day = dt.datetime(self.year,1,1,12,0) + dt.timedelta(days=kt)
+                        this_day = dt.datetime(self.year,1,1,12,0) + dt.timedelta(days=int(kt))
                         time[kt] = (this_day - self.reftime).days + (this_day - self.reftime).seconds / 86400.
                 # close file
                 self._closenc(fid_radsw)
@@ -283,7 +283,7 @@ class ERAinterim_processing():
 			msl = self._readnc_oneframe(fid_msl,'MSL',kt)
 			q2_tmp = humidity_toolbox.q2_from_d2_and_msl(d2,msl)
 			q2_out[kt,:,:] = q2_tmp.copy()
-			this_time = dt.datetime(self.year,1,1,0,0) + dt.timedelta(seconds=kt*86400/self.nframes_per_day)
+			this_time = dt.datetime(self.year,1,1,0,0) + dt.timedelta(seconds=int(kt)*86400/self.nframes_per_day)
                         time[kt] = (this_time - self.reftime).days + (this_time - self.reftime).seconds / 86400.
                 # close file
                 self._closenc(fid_d2)
@@ -312,7 +312,7 @@ class ERAinterim_processing():
 		# run the computation
 		for kt in np.arange(0,self.nframes):
 			t2_out[kt,:,:] = self._readnc_oneframe(fid_t2,'T2M',kt) - 273.15
-			this_time = dt.datetime(self.year,1,1,0,0) + dt.timedelta(seconds=kt*86400/self.nframes_per_day)
+			this_time = dt.datetime(self.year,1,1,0,0) + dt.timedelta(seconds=int(kt)*86400/self.nframes_per_day)
                         time[kt] = (this_time - self.reftime).days + (this_time - self.reftime).seconds / 86400.
                 # close file
                 self._closenc(fid_t2)
@@ -340,7 +340,7 @@ class ERAinterim_processing():
 		# run the computation
 		for kt in np.arange(0,self.nframes):
 			msl_out[kt,:,:] = self._readnc_oneframe(fid_msl,'MSL',kt)
-			this_time = dt.datetime(self.year,1,1,0,0) + dt.timedelta(seconds=kt*86400/self.nframes_per_day)
+			this_time = dt.datetime(self.year,1,1,0,0) + dt.timedelta(seconds=int(kt)*86400/self.nframes_per_day)
                         time[kt] = (this_time - self.reftime).days + (this_time - self.reftime).seconds / 86400.
                 # close file
                 self._closenc(fid_msl)
@@ -368,7 +368,7 @@ class ERAinterim_processing():
 		# run the computation
 		for kt in np.arange(0,self.nframes):
 			tcc_out[kt,:,:] = self._readnc_oneframe(fid_tcc,'MSL',kt)
-			this_time = dt.datetime(self.year,1,1,0,0) + dt.timedelta(seconds=kt*86400/self.nframes_per_day)
+			this_time = dt.datetime(self.year,1,1,0,0) + dt.timedelta(seconds=int(kt)*86400/self.nframes_per_day)
                         time[kt] = (this_time - self.reftime).days + (this_time - self.reftime).seconds / 86400.
                 # close file
                 self._closenc(fid_tcc)
@@ -396,7 +396,7 @@ class ERAinterim_processing():
 		# run the computation
 		for kt in np.arange(0,self.nframes):
 			u10_out[kt,:,:] = self._readnc_oneframe(fid_u10,'U10M',kt)
-			this_time = dt.datetime(self.year,1,1,0,0) + dt.timedelta(seconds=kt*86400/self.nframes_per_day)
+			this_time = dt.datetime(self.year,1,1,0,0) + dt.timedelta(seconds=int(kt)*86400/self.nframes_per_day)
                         time[kt] = (this_time - self.reftime).days + (this_time - self.reftime).seconds / 86400.
                 # close file
                 self._closenc(fid_u10)
@@ -424,7 +424,7 @@ class ERAinterim_processing():
 		# run the computation
 		for kt in np.arange(0,self.nframes):
 			v10_out[kt,:,:] = self._readnc_oneframe(fid_v10,'V10M',kt)
-			this_time = dt.datetime(self.year,1,1,0,0) + dt.timedelta(seconds=kt*86400/self.nframes_per_day)
+			this_time = dt.datetime(self.year,1,1,0,0) + dt.timedelta(seconds=int(kt)*86400/self.nframes_per_day)
                         time[kt] = (this_time - self.reftime).days + (this_time - self.reftime).seconds / 86400.
                 # close file
                 self._closenc(fid_v10)
