@@ -367,7 +367,7 @@ class ERAinterim_processing():
                 lat = self._readnc(fid_tcc,'lat')
 		# run the computation
 		for kt in np.arange(0,self.nframes):
-			tcc_out[kt,:,:] = self._readnc_oneframe(fid_tcc,'MSL',kt)
+			tcc_out[kt,:,:] = self._readnc_oneframe(fid_tcc,'TCC',kt)
 			this_time = dt.datetime(self.year,1,1,0,0) + dt.timedelta(seconds=int(kt)*86400/self.nframes_per_day)
                         time[kt] = (this_time - self.reftime).days + (this_time - self.reftime).seconds / 86400.
                 # close file
