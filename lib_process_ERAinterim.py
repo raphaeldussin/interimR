@@ -38,33 +38,33 @@ class ERAinterim_processing():
 		return None
 
 	def __call__(self):
-		if self.dict_input.has_key('file_precip'):
-			print 'Processing precip file...'
-			self.process_precip_to_daily()
-		if self.dict_input.has_key('file_snow'):
-			print 'Processing snow file...'
-			self.process_snow_to_daily()
-		if self.dict_input.has_key('file_radlw'):
-			print 'Processing longwave file...'
-			self.process_radlw_to_daily()
-		if self.dict_input.has_key('file_radsw'):
-			print 'Processing shortwave file...'
-			self.process_radsw_to_daily()
-		if self.dict_input.has_key('file_d2'):
-			print 'Create specific humidity file...'
-			self.create_q2_file()
-		if self.dict_input.has_key('file_t2'):
-			print 'Rewrite t2 file...'
-			self.process_t2_file()
-		if self.dict_input.has_key('file_msl'):
-			print 'Rewrite msl file...'
-			self.process_msl_file()
-		if self.dict_input.has_key('file_tcc'):
-			print 'Rewrite tcc file...'
-			self.process_tcc_file()
-		if self.dict_input.has_key('file_u10'):
-			print 'Rewrite u10 file...'
-			self.process_u10_file()
+		#if self.dict_input.has_key('file_precip'):
+		#	print 'Processing precip file...'
+		#	self.process_precip_to_daily()
+		#if self.dict_input.has_key('file_snow'):
+		#	print 'Processing snow file...'
+		#	self.process_snow_to_daily()
+		#if self.dict_input.has_key('file_radlw'):
+		#	print 'Processing longwave file...'
+		#	self.process_radlw_to_daily()
+		#if self.dict_input.has_key('file_radsw'):
+		#	print 'Processing shortwave file...'
+		#	self.process_radsw_to_daily()
+		#if self.dict_input.has_key('file_d2'):
+		#	print 'Create specific humidity file...'
+		#	self.create_q2_file()
+		#if self.dict_input.has_key('file_t2'):
+		#	print 'Rewrite t2 file...'
+		#	self.process_t2_file()
+		#if self.dict_input.has_key('file_msl'):
+		#	print 'Rewrite msl file...'
+		#	self.process_msl_file()
+		#if self.dict_input.has_key('file_tcc'):
+		#	print 'Rewrite tcc file...'
+		#	self.process_tcc_file()
+		#if self.dict_input.has_key('file_u10'):
+		#	print 'Rewrite u10 file...'
+		#	self.process_u10_file()
 		if self.dict_input.has_key('file_v10'):
 			print 'Rewrite v10 file...'
 			self.process_v10_file()
@@ -98,7 +98,7 @@ class ERAinterim_processing():
 		if self.target_model == 'ROMS':
 			my_dict = {'varname':'rain','time_dim':'rain_time','time_var':'rain_time','long name':'Total Precipitation',\
 			'units':'kg.m-2.s-1','fileout':self.output_dir + 'precip_' + self.dataset + '_' + str(self.year) + '_ROMS.nc'}
-			self._write_ncfile(lon,lat,time,precip_out,my_dict)
+			self._write_ncfile(lon,lat[::-1],time,precip_out[:,::-1,:],my_dict)
 		elif self.target_model == 'NEMO':
 			my_dict = {'varname':'precip','time_dim':'time','time_var':'time','long name':'Total Precipitation',\
 			'units':'kg.m-2.s-1','fileout':self.output_dir + 'precip_' + self.dataset + '_' + str(self.year) + '.nc'}
@@ -485,11 +485,6 @@ class ERAinterim_processing():
 	        longitudes = fid.createVariable('lon', 'f8', ('lon',))
 	        times      = fid.createVariable(dict_wrt['time_var'], 'f8', (dict_wrt['time_dim'],))
 	        variable   = fid.createVariable(dict_wrt['varname'], 'f4', (dict_wrt['time_dim'],'lat','lon',),fill_value=self.spval)
-	        # data
-	        latitudes[:]    = lat_array
-	        longitudes[:]   = lon_array
-	        times[:]        = time
-	        variable[:,:,:] = var
 	
 		# attributes
 		longitudes.units = "degrees_east" 
@@ -513,6 +508,12 @@ class ERAinterim_processing():
 		variable.time = dict_wrt['time_var']
 		variable.missing_value = self.spval
 		variable.valid_range = var.min() , var.max()
+
+	        # data
+	        latitudes[:]    = lat_array
+	        longitudes[:]   = lon_array
+	        times[:]        = time
+	        variable[:,:,:] = var
 
 	        # close
 	        fid.close()
