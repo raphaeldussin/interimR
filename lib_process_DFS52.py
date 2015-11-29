@@ -4,6 +4,7 @@ import calendar
 import datetime as dt
 import humidity_toolbox
 import os 
+import lib_ioncdf as ioncdf
 
 class DFS52_processing():
 	''' A Class to create the DFS5.2 dataset from ERAinterim '''
@@ -102,11 +103,11 @@ class DFS52_processing():
 		radlw_max = -1.0e+36
 		nframes = self.nframes / self.nframes_per_day # daily file
                 # open file
-                fid_radlw = self._opennc(self.file_radlw)
+                fid_radlw = ioncdf.opennc(self.file_radlw)
                 # read coordinates and time
-                lon = self._readnc(fid_radlw,'lon')
-                lat = self._readnc(fid_radlw,'lat')
-                time = self._readnc(fid_radlw,self.name_time_radlw)
+                lon = ioncdf.readnc(fid_radlw,'lon')
+                lat = ioncdf.readnc(fid_radlw,'lat')
+                time = ioncdf.readnc(fid_radlw,self.name_time_radlw)
 		time_min = time.min()
 		time_max = time.max()
                 # output file informations
@@ -116,9 +117,12 @@ class DFS52_processing():
                 elif self.target_model == 'NEMO':
                         my_dict = {'varname':'radlw','time_dim':'time','time_var':'time','long name':'Downwelling longwave radiation',\
                         'units':'W.m-2','fileout':self.output_dir + 'radlw_' + self.dataset + '_' + str(self.year) + '.nc'}
+		my_dict['description'] = 'DFS 5.2 (MEOM/LGGE) contact : raphael.dussin@gmail.com'
+		my_dict['spval'] = self.spval
+		my_dict['reftime'] = self.reftime
 		# faster to loop twice than write attributes after data
 		for kt in np.arange(0,nframes):
-			radlw_tmp[:,:]   = self._readnc_oneframe(fid_radlw,self.name_radlw,kt)
+			radlw_tmp[:,:]   = ioncdf.readnc_oneframe(fid_radlw,self.name_radlw,kt)
 			# attributes
 			radlw_min_tmp = radlw_tmp.min()
 			radlw_max_tmp = radlw_tmp.max()
@@ -130,11 +134,11 @@ class DFS52_processing():
 		my_dict['time_valid_min'] = time_min
 		my_dict['time_valid_max'] = time_max
                 # open output file to write
-	        fidout,timeout,varout = self._create_ncfile(lon,lat,time,my_dict)
+	        fidout,timeout,varout = ioncdf.create_ncfile(lon,lat,time,my_dict)
 		# open radlw factor
-		fid_factor = self._opennc(self.longwave_factor)
-		radlw_factor = self._readnc(fid_factor,'radlw')
-		self._closenc(fid_factor)
+		fid_factor = ioncdf.opennc(self.longwave_factor)
+		radlw_factor = ioncdf.readnc(fid_factor,'radlw')
+		ioncdf.closenc(fid_factor)
 		# flip upside down for ROMS
 		if self.target_model == 'ROMS':
 			radlw_factor = radlw_factor[::-1,:]
@@ -142,12 +146,12 @@ class DFS52_processing():
 		# run the computation
 		correct_heat_budget = 1.0088 # attempt to close heat budget 
 		for kt in np.arange(0,nframes):
-			radlw_tmp[:,:]   = self._readnc_oneframe(fid_radlw,self.name_radlw,kt)
+			radlw_tmp[:,:]   = ioncdf.readnc_oneframe(fid_radlw,self.name_radlw,kt)
 			timeout[kt]    = time[kt]
 			varout[kt,:,:] = radlw_tmp[:,:] * radlw_factor[:,:] * correct_heat_budget
                 # close file
-                self._closenc(fid_radlw)
-		self._finalize_ncfile(fidout)
+                ioncdf.closenc(fid_radlw)
+		ioncdf.finalize_ncfile(fidout)
 		radlw_tmp = None
 		return None
 
@@ -158,11 +162,11 @@ class DFS52_processing():
 		radsw_max = -1.0e+36
 		nframes = self.nframes / self.nframes_per_day # daily file
                 # open file
-                fid_radsw = self._opennc(self.file_radsw)
+                fid_radsw = ioncdf.opennc(self.file_radsw)
                 # read coordinates and time
-                lon = self._readnc(fid_radsw,'lon')
-                lat = self._readnc(fid_radsw,'lat')
-                time = self._readnc(fid_radsw,self.name_time_radsw)
+                lon = ioncdf.readnc(fid_radsw,'lon')
+                lat = ioncdf.readnc(fid_radsw,'lat')
+                time = ioncdf.readnc(fid_radsw,self.name_time_radsw)
 		time_min = time.min()
 		time_max = time.max()
                 # output file informations
@@ -172,9 +176,12 @@ class DFS52_processing():
                 elif self.target_model == 'NEMO':
                         my_dict = {'varname':'radsw','time_dim':'time','time_var':'time','long name':'Shortwave radiation',\
                         'units':'W.m-2','fileout':self.output_dir + 'radsw_' + self.dataset + '_' + str(self.year) + '.nc'}
+		my_dict['description'] = 'DFS 5.2 (MEOM/LGGE) contact : raphael.dussin@gmail.com'
+		my_dict['spval'] = self.spval
+		my_dict['reftime'] = self.reftime
 		# faster to loop twice than write attributes after data
 		for kt in np.arange(0,nframes):
-			radsw_tmp[:,:]   = self._readnc_oneframe(fid_radsw,self.name_radsw,kt)
+			radsw_tmp[:,:]   = ioncdf.readnc_oneframe(fid_radsw,self.name_radsw,kt)
 			# attributes
 			radsw_min_tmp = radsw_tmp.min()
 			radsw_max_tmp = radsw_tmp.max()
@@ -186,23 +193,23 @@ class DFS52_processing():
 		my_dict['time_valid_min'] = time_min
 		my_dict['time_valid_max'] = time_max
                 # open output file to write
-	        fidout,timeout,varout = self._create_ncfile(lon,lat,time,my_dict)
+	        fidout,timeout,varout = ioncdf.create_ncfile(lon,lat,time,my_dict)
 		# open radsw factor
-		fid_factor = self._opennc(self.shortwave_factor)
-		radsw_factor = self._readnc(fid_factor,'radsw')
-		self._closenc(fid_factor)
+		fid_factor = ioncdf.opennc(self.shortwave_factor)
+		radsw_factor = ioncdf.readnc(fid_factor,'radsw')
+		ioncdf.closenc(fid_factor)
 		# flip upside down for ROMS
 		if self.target_model == 'ROMS':
 			radsw_factor = radsw_factor[::-1,:]
 
 		# run the computation
 		for kt in np.arange(0,nframes):
-			radsw_tmp[:,:]   = self._readnc_oneframe(fid_radsw,self.name_radsw,kt)
+			radsw_tmp[:,:]   = ioncdf.readnc_oneframe(fid_radsw,self.name_radsw,kt)
 			timeout[kt]    = time[kt]
 			varout[kt,:,:] = radsw_tmp[:,:] * radsw_factor[:,:]
                 # close file
-                self._closenc(fid_radsw)
-		self._finalize_ncfile(fidout)
+                ioncdf.closenc(fid_radsw)
+		ioncdf.finalize_ncfile(fidout)
 		radsw_tmp = None
 		return None
 
@@ -212,11 +219,11 @@ class DFS52_processing():
 		u10_min = +1.0e+36
 		u10_max = -1.0e+36
                 # open file
-                fid_u10 = self._opennc(self.file_u10)
+                fid_u10 = ioncdf.opennc(self.file_u10)
                 # read coordinates and time
-                lon = self._readnc(fid_u10,'lon')
-                lat = self._readnc(fid_u10,'lat')
-                time = self._readnc(fid_u10,self.name_time_u10)
+                lon = ioncdf.readnc(fid_u10,'lon')
+                lat = ioncdf.readnc(fid_u10,'lat')
+                time = ioncdf.readnc(fid_u10,self.name_time_u10)
 		time_min = time.min()
 		time_max = time.max()
                 # output file informations
@@ -226,9 +233,12 @@ class DFS52_processing():
 		elif self.target_model == 'NEMO':
 	                my_dict = {'varname':'u10','time_dim':'time','time_var':'time','long name':'Zonal wind speed at 10m',\
 	                'units':'m/s','fileout':self.output_dir + 'u10_' + self.dataset + '_' + str(self.year) + '.nc'}
+		my_dict['description'] = 'DFS 5.2 (MEOM/LGGE) contact : raphael.dussin@gmail.com'
+		my_dict['spval'] = self.spval
+		my_dict['reftime'] = self.reftime
 		# faster to loop twice than write attributes after data
 		for kt in np.arange(0,self.nframes):
-			u10_tmp[:,:]   = self._readnc_oneframe(fid_u10,self.name_u10,kt)
+			u10_tmp[:,:]   = ioncdf.readnc_oneframe(fid_u10,self.name_u10,kt)
 			# attributes
 			u10_min_tmp = u10_tmp.min()
 			u10_max_tmp = u10_tmp.max()
@@ -240,23 +250,23 @@ class DFS52_processing():
 		my_dict['time_valid_min'] = time_min
 		my_dict['time_valid_max'] = time_max
                 # open output file to write
-	        fidout,timeout,varout = self._create_ncfile(lon,lat,time,my_dict)
+	        fidout,timeout,varout = ioncdf.create_ncfile(lon,lat,time,my_dict)
 		# open background velocity
-		fid_bgd = self._opennc(self.u10_background)
-		u10_background = self._readnc(fid_bgd,'u10')
-		self._closenc(fid_bgd)
+		fid_bgd = ioncdf.opennc(self.u10_background)
+		u10_background = ioncdf.readnc(fid_bgd,'u10')
+		ioncdf.closenc(fid_bgd)
 		# flip upside down for ROMS
 		if self.target_model == 'ROMS':
 			u10_background = u10_background[::-1,:]
 
 		# run the computation
 		for kt in np.arange(0,self.nframes):
-			u10_tmp[:,:]   = self._readnc_oneframe(fid_u10,self.name_u10,kt)
+			u10_tmp[:,:]   = ioncdf.readnc_oneframe(fid_u10,self.name_u10,kt)
 			timeout[kt]    = time[kt]
 			varout[kt,:,:] = u10_tmp[:,:] + u10_background[:,:]
                 # close file
-                self._closenc(fid_u10)
-		self._finalize_ncfile(fidout)
+                ioncdf.closenc(fid_u10)
+		ioncdf.finalize_ncfile(fidout)
 		u10_tmp = None
 		return None
 
@@ -266,11 +276,11 @@ class DFS52_processing():
 		v10_min = +1.0e+36
 		v10_max = -1.0e+36
                 # open file
-                fid_v10 = self._opennc(self.file_v10)
+                fid_v10 = ioncdf.opennc(self.file_v10)
                 # read coordinates and time
-                lon = self._readnc(fid_v10,'lon')
-                lat = self._readnc(fid_v10,'lat')
-                time = self._readnc(fid_v10,self.name_time_v10)
+                lon = ioncdf.readnc(fid_v10,'lon')
+                lat = ioncdf.readnc(fid_v10,'lat')
+                time = ioncdf.readnc(fid_v10,self.name_time_v10)
 		time_min = time.min()
 		time_max = time.max()
                 # output file informations
@@ -280,9 +290,12 @@ class DFS52_processing():
 		elif self.target_model == 'NEMO':
 	                my_dict = {'varname':'v10','time_dim':'time','time_var':'time','long name':'Meridional wind speed at 10m',\
 	                'units':'m/s','fileout':self.output_dir + 'v10_' + self.dataset + '_' + str(self.year) + '.nc'}
+		my_dict['description'] = 'DFS 5.2 (MEOM/LGGE) contact : raphael.dussin@gmail.com'
+		my_dict['spval'] = self.spval
+		my_dict['reftime'] = self.reftime
 		# faster to loop twice than write attributes after data
 		for kt in np.arange(0,self.nframes):
-			v10_tmp[:,:]   = self._readnc_oneframe(fid_v10,self.name_v10,kt)
+			v10_tmp[:,:]   = ioncdf.readnc_oneframe(fid_v10,self.name_v10,kt)
 			# attributes
 			v10_min_tmp = v10_tmp.min()
 			v10_max_tmp = v10_tmp.max()
@@ -294,100 +307,23 @@ class DFS52_processing():
 		my_dict['time_valid_min'] = time_min
 		my_dict['time_valid_max'] = time_max
                 # open output file to write
-	        fidout,timeout,varout = self._create_ncfile(lon,lat,time,my_dict)
+	        fidout,timeout,varout = ioncdf.create_ncfile(lon,lat,time,my_dict)
 		# open background velocity
-		fid_bgd = self._opennc(self.v10_background)
-		v10_background = self._readnc(fid_bgd,'v10')
-		self._closenc(fid_bgd)
+		fid_bgd = ioncdf.opennc(self.v10_background)
+		v10_background = ioncdf.readnc(fid_bgd,'v10')
+		ioncdf.closenc(fid_bgd)
 		# flip upside down for ROMS
 		if self.target_model == 'ROMS':
 			v10_background = v10_background[::-1,:]
 
 		# run the computation
 		for kt in np.arange(0,self.nframes):
-			v10_tmp[:,:]   = self._readnc_oneframe(fid_v10,self.name_v10,kt)
+			v10_tmp[:,:]   = ioncdf.readnc_oneframe(fid_v10,self.name_v10,kt)
 			timeout[kt]    = time[kt]
 			varout[kt,:,:] = v10_tmp[:,:] + v10_background[:,:]
                 # close file
-                self._closenc(fid_v10)
-		self._finalize_ncfile(fidout)
+                ioncdf.closenc(fid_v10)
+		ioncdf.finalize_ncfile(fidout)
 		v10_tmp = None
 		return None
-
-
-
-
-
-
-
-
-
-	#------------------ NetCDF functions ------------------------------------------
-	def _opennc(self,myfile):
-		fid = nc.Dataset(myfile,'r')
-		return fid
-
-	def _closenc(self,fid):
-		fid.close()
-		return None
-
-        def _readnc_frames(self,fid,myvar,myframe_start,myframe_end):
-                ''' read data from netcdf '''
-                out = fid.variables[myvar][myframe_start:myframe_end,:,:].squeeze()
-                return out
-
-        def _readnc_oneframe(self,fid,myvar,myframe):
-                ''' read data from netcdf '''
-                out = fid.variables[myvar][myframe,:,:].squeeze()
-                return out
-
-        def _readnc(self,fid,myvar):
-                ''' read data from netcdf '''
-                out = fid.variables[myvar][:].squeeze()
-                return out
-
-	def _create_ncfile(self,lon_array,lat_array,time,dict_wrt):
-        	fid = nc.Dataset(dict_wrt['fileout'], 'w', format='NETCDF3_CLASSIC')
-	        fid.description = 'DFS5.2 (raphael.dussin@gmail.com)'
-	        # dimensions
-	        fid.createDimension('lat', lat_array.shape[0])
-	        fid.createDimension('lon', lon_array.shape[0])
-	        fid.createDimension(dict_wrt['time_dim'], None)
-	        # variables
-	        latitudes  = fid.createVariable('lat', 'f8', ('lat',))
-	        longitudes = fid.createVariable('lon', 'f8', ('lon',))
-	        times      = fid.createVariable(dict_wrt['time_var'], 'f8', (dict_wrt['time_dim'],))
-	        variable   = fid.createVariable(dict_wrt['varname'], 'f4', (dict_wrt['time_dim'],'lat','lon',),fill_value=self.spval)
-	        # data
-	        latitudes[:]    = lat_array
-	        longitudes[:]   = lon_array
-	
-		# attributes
-		longitudes.units = "degrees_east" 
-		longitudes.valid_min = lon_array.min()
-		longitudes.valid_max = lon_array.max()
-		longitudes.long_name = "longitude" 
-
-		latitudes.units = "degrees_north" 
-		latitudes.valid_min = lat_array.min()
-		latitudes.valid_max = lat_array.max()
-		latitudes.long_name = "latitude" 
-
-		times.units = "days since " + self.reftime.isoformat()
-                times.calendar = "LEAP"
-		times.valid_min = dict_wrt['time_valid_min']
-                times.valid_max = dict_wrt['time_valid_max']
-
-		variable.long_name = dict_wrt['long name']
-		variable.units = dict_wrt['units']
-		variable.coordinates = "lon lat" 
-		variable.time = dict_wrt['time_var']
-		variable.missing_value = self.spval
-		variable.valid_range = dict_wrt['var_valid_min'], dict_wrt['var_valid_max']
-		return fid, times, variable
-
-	def _finalize_ncfile(self,fid):
-	        # close
-	        fid.close()
-	        return None
 
