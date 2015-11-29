@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from lib_process_ERAinterim import ERAinterim_drown
+from lib_drown import drown
 import numpy as np
 import ConfigParser
 import sys 
@@ -60,5 +60,5 @@ for year in np.arange(fyear,lyear+1):
 		             'target_model':dict_ctl['target_model']                                                     , \
 		             'year':year, 'ncumul':4, 'nx':512, 'ny':256, 'freq':'3h'}
 
-	go = ERAinterim_drown(my_inputs)
+	go = drown(my_inputs)
 	go()
