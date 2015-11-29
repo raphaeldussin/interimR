@@ -44,8 +44,8 @@ for year in np.arange(fyear,lyear+1):
 	             'file_q2':     dict_ctl['processed_nc_dir'] + 'drowned_q2_ERAinterim_'     + str(year) + suffix, \
 	             'file_u10':    dict_ctl['processed_nc_dir'] + 'drowned_u10_ERAinterim_'    + str(year) + suffix, \
 	             'file_v10':    dict_ctl['processed_nc_dir'] + 'drowned_v10_ERAinterim_'    + str(year) + suffix, \
-	             'file_radlw':  dict_ctl['processed_nc_dir'] + 'drowned_radlw_ERAinterim_'  + str(year) + suffix, \
-	             'file_radsw':  dict_ctl['processed_nc_dir'] + 'drowned_radsw_ERAinterim_'  + str(year) + suffix, \
+	             'file_radlw':  dict_ctl['processed_nc_dir'] + 'drowned_radlw_ERAinterim_'  + str(year) + '_daily' + suffix, \
+	             'file_radsw':  dict_ctl['processed_nc_dir'] + 'drowned_radsw_ERAinterim_'  + str(year) + '_daily' + suffix, \
 	             'file_precip': dict_ctl['processed_nc_dir'] + 'drowned_precip_ERAinterim_' + str(year) + suffix, \
 	             'file_snow':   dict_ctl['processed_nc_dir'] + 'drowned_snow_ERAinterim_'   + str(year) + suffix, \
 	             'file_msl':    dict_ctl['processed_nc_dir'] + 'drowned_msl_ERAinterim_'    + str(year) + suffix, \

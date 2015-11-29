@@ -38,33 +38,33 @@ class ERAinterim_processing():
 		return None
 
 	def __call__(self):
-		#if self.dict_input.has_key('file_precip'):
-		#	print 'Processing precip file...'
-		#	self.process_precip_to_daily()
-		#if self.dict_input.has_key('file_snow'):
-		#	print 'Processing snow file...'
-		#	self.process_snow_to_daily()
-		#if self.dict_input.has_key('file_radlw'):
-		#	print 'Processing longwave file...'
-		#	self.process_radlw_to_daily()
-		#if self.dict_input.has_key('file_radsw'):
-		#	print 'Processing shortwave file...'
-		#	self.process_radsw_to_daily()
-		#if self.dict_input.has_key('file_d2'):
-		#	print 'Create specific humidity file...'
-		#	self.create_q2_file()
-		#if self.dict_input.has_key('file_t2'):
-		#	print 'Rewrite t2 file...'
-		#	self.process_t2_file()
-		#if self.dict_input.has_key('file_msl'):
-		#	print 'Rewrite msl file...'
-		#	self.process_msl_file()
-		#if self.dict_input.has_key('file_tcc'):
-		#	print 'Rewrite tcc file...'
-		#	self.process_tcc_file()
-		#if self.dict_input.has_key('file_u10'):
-		#	print 'Rewrite u10 file...'
-		#	self.process_u10_file()
+		if self.dict_input.has_key('file_precip'):
+			print 'Processing precip file...'
+			self.process_precip_to_daily()
+		if self.dict_input.has_key('file_snow'):
+			print 'Processing snow file...'
+			self.process_snow_to_daily()
+		if self.dict_input.has_key('file_radlw'):
+			print 'Processing longwave file...'
+			self.process_radlw_to_daily()
+		if self.dict_input.has_key('file_radsw'):
+			print 'Processing shortwave file...'
+			self.process_radsw_to_daily()
+		if self.dict_input.has_key('file_d2'):
+			print 'Create specific humidity file...'
+			self.create_q2_file()
+		if self.dict_input.has_key('file_t2'):
+			print 'Rewrite t2 file...'
+			self.process_t2_file()
+		if self.dict_input.has_key('file_msl'):
+			print 'Rewrite msl file...'
+			self.process_msl_file()
+		if self.dict_input.has_key('file_tcc'):
+			print 'Rewrite tcc file...'
+			self.process_tcc_file()
+		if self.dict_input.has_key('file_u10'):
+			print 'Rewrite u10 file...'
+			self.process_u10_file()
 		if self.dict_input.has_key('file_v10'):
 			print 'Rewrite v10 file...'
 			self.process_v10_file()

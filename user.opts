@@ -10,7 +10,7 @@ lsm_file          =
 sosie_dir         =
 
 [RD-proteus]
-first_year        = 2013
+first_year        = 2014
 last_year         = 2014
 target_model      = ROMS
 original_grib_dir = /Volumes/P4/workdir/raphael/ERAinterim_roms/grib/

@@ -1,4 +1,5 @@
 [RD-proteus]
 u10_background    = ./data/DFS5.2/winds/correction_u10.nc
 v10_background    = ./data/DFS5.2/winds/correction_v10.nc
-
+shortwave_factor  = ./data/DFS5.2/radiative/smoothed_ratio_radsw.nc
+longwave_factor   = ./data/DFS5.2/radiative/smoothed_ratio_radlw.nc

@@ -67,12 +67,12 @@ class DFS52_processing():
 		#if self.dict_input.has_key('file_snow'):
 		#	print 'Processing snow file...'
 		#	self.process_snow_to_daily()
-		#if self.dict_input.has_key('file_radlw'):
-		#	print 'Processing longwave file...'
-		#	self.process_radlw_to_daily()
-		#if self.dict_input.has_key('file_radsw'):
-		#	print 'Processing shortwave file...'
-		#	self.process_radsw_to_daily()
+		if self.dict_input.has_key('file_radlw'):
+			print 'Create DFS5.2 longwave file...'
+			self.process_radlw_file()
+		if self.dict_input.has_key('file_radsw'):
+			print 'Processing shortwave file...'
+			self.process_radsw_file()
 		#if self.dict_input.has_key('file_d2'):
 		#	print 'Create specific humidity file...'
 		#	self.create_q2_file()
@@ -94,6 +94,117 @@ class DFS52_processing():
 		return None
 
 	#------------------ Meta functions ------------------------------------------
+
+	def process_radlw_file(self):
+		''' Create longwave radiation file '''
+		radlw_tmp = np.empty((self.ny,self.nx))
+		radlw_min = +1.0e+36
+		radlw_max = -1.0e+36
+		nframes = self.nframes / self.nframes_per_day # daily file
+                # open file
+                fid_radlw = self._opennc(self.file_radlw)
+                # read coordinates and time
+                lon = self._readnc(fid_radlw,'lon')
+                lat = self._readnc(fid_radlw,'lat')
+                time = self._readnc(fid_radlw,self.name_time_radlw)
+		time_min = time.min()
+		time_max = time.max()
+                # output file informations
+		if self.target_model == 'ROMS':
+                        my_dict = {'varname':'lwrad_down','time_dim':'lrf_time','time_var':'lrf_time','long name':'Downwelling longwave radiation',\
+                        'units':'W.m-2','fileout':self.output_dir + 'radlw_' + self.dataset + '_' + str(self.year) + '_ROMS.nc'}
+                elif self.target_model == 'NEMO':
+                        my_dict = {'varname':'radlw','time_dim':'time','time_var':'time','long name':'Downwelling longwave radiation',\
+                        'units':'W.m-2','fileout':self.output_dir + 'radlw_' + self.dataset + '_' + str(self.year) + '.nc'}
+		# faster to loop twice than write attributes after data
+		for kt in np.arange(0,nframes):
+			radlw_tmp[:,:]   = self._readnc_oneframe(fid_radlw,self.name_radlw,kt)
+			# attributes
+			radlw_min_tmp = radlw_tmp.min()
+			radlw_max_tmp = radlw_tmp.max()
+			radlw_min = np.minimum(radlw_min,radlw_min_tmp)
+			radlw_max = np.maximum(radlw_max,radlw_max_tmp)
+
+		my_dict['var_valid_min'] = radlw_min
+		my_dict['var_valid_max'] = radlw_max
+		my_dict['time_valid_min'] = time_min
+		my_dict['time_valid_max'] = time_max
+                # open output file to write
+	        fidout,timeout,varout = self._create_ncfile(lon,lat,time,my_dict)
+		# open radlw factor
+		fid_factor = self._opennc(self.longwave_factor)
+		radlw_factor = self._readnc(fid_factor,'radlw')
+		self._closenc(fid_factor)
+		# flip upside down for ROMS
+		if self.target_model == 'ROMS':
+			radlw_factor = radlw_factor[::-1,:]
+
+		# run the computation
+		correct_heat_budget = 1.0088 # attempt to close heat budget 
+		for kt in np.arange(0,nframes):
+			radlw_tmp[:,:]   = self._readnc_oneframe(fid_radlw,self.name_radlw,kt)
+			timeout[kt]    = time[kt]
+			varout[kt,:,:] = radlw_tmp[:,:] * radlw_factor[:,:] * correct_heat_budget
+                # close file
+                self._closenc(fid_radlw)
+		self._finalize_ncfile(fidout)
+		radlw_tmp = None
+		return None
+
+	def process_radsw_file(self):
+		''' Create shortwave radiation file '''
+		radsw_tmp = np.empty((self.ny,self.nx))
+		radsw_min = +1.0e+36
+		radsw_max = -1.0e+36
+		nframes = self.nframes / self.nframes_per_day # daily file
+                # open file
+                fid_radsw = self._opennc(self.file_radsw)
+                # read coordinates and time
+                lon = self._readnc(fid_radsw,'lon')
+                lat = self._readnc(fid_radsw,'lat')
+                time = self._readnc(fid_radsw,self.name_time_radsw)
+		time_min = time.min()
+		time_max = time.max()
+                # output file informations
+		if self.target_model == 'ROMS':
+                        my_dict = {'varname':'swrad','time_dim':'srf_time','time_var':'srf_time','long name':'Shortwave radiation',\
+                        'units':'W.m-2','fileout':self.output_dir + 'radsw_' + self.dataset + '_' + str(self.year) + '_ROMS.nc'}
+                elif self.target_model == 'NEMO':
+                        my_dict = {'varname':'radsw','time_dim':'time','time_var':'time','long name':'Shortwave radiation',\
+                        'units':'W.m-2','fileout':self.output_dir + 'radsw_' + self.dataset + '_' + str(self.year) + '.nc'}
+		# faster to loop twice than write attributes after data
+		for kt in np.arange(0,nframes):
+			radsw_tmp[:,:]   = self._readnc_oneframe(fid_radsw,self.name_radsw,kt)
+			# attributes
+			radsw_min_tmp = radsw_tmp.min()
+			radsw_max_tmp = radsw_tmp.max()
+			radsw_min = np.minimum(radsw_min,radsw_min_tmp)
+			radsw_max = np.maximum(radsw_max,radsw_max_tmp)
+
+		my_dict['var_valid_min'] = radsw_min
+		my_dict['var_valid_max'] = radsw_max
+		my_dict['time_valid_min'] = time_min
+		my_dict['time_valid_max'] = time_max
+                # open output file to write
+	        fidout,timeout,varout = self._create_ncfile(lon,lat,time,my_dict)
+		# open radsw factor
+		fid_factor = self._opennc(self.shortwave_factor)
+		radsw_factor = self._readnc(fid_factor,'radsw')
+		self._closenc(fid_factor)
+		# flip upside down for ROMS
+		if self.target_model == 'ROMS':
+			radsw_factor = radsw_factor[::-1,:]
+
+		# run the computation
+		for kt in np.arange(0,nframes):
+			radsw_tmp[:,:]   = self._readnc_oneframe(fid_radsw,self.name_radsw,kt)
+			timeout[kt]    = time[kt]
+			varout[kt,:,:] = radsw_tmp[:,:] * radsw_factor[:,:]
+                # close file
+                self._closenc(fid_radsw)
+		self._finalize_ncfile(fidout)
+		radsw_tmp = None
+		return None
 
 	def process_u10_file(self):
 		''' Create zonal wind file '''
@@ -123,7 +234,7 @@ class DFS52_processing():
 			u10_max_tmp = u10_tmp.max()
 			u10_min = np.minimum(u10_min,u10_min_tmp)
 			u10_max = np.maximum(u10_max,u10_max_tmp)
-		
+
 		my_dict['var_valid_min'] = u10_min
 		my_dict['var_valid_max'] = u10_max
 		my_dict['time_valid_min'] = time_min
@@ -177,7 +288,7 @@ class DFS52_processing():
 			v10_max_tmp = v10_tmp.max()
 			v10_min = np.minimum(v10_min,v10_min_tmp)
 			v10_max = np.maximum(v10_max,v10_max_tmp)
-		
+
 		my_dict['var_valid_min'] = v10_min
 		my_dict['var_valid_max'] = v10_max
 		my_dict['time_valid_min'] = time_min
@@ -279,68 +390,4 @@ class DFS52_processing():
 	        # close
 	        fid.close()
 	        return None
-
-
-
-
-
-
-
-
-class ERAinterim_drown():
-
-        def __init__(self,dict_input):
-                # read inputs
-                for key in dict_input:
-                        exec('self.' + key + '=dict_input[key]')
-
-		if self.target_model == 'ROMS':
-			self.name_t2     = 'Tair'        ; self.name_time_t2     = 'tair_time'
-			self.name_q2     = 'Qair'        ; self.name_time_q2     = 'qair_time'
-			self.name_u10    = 'Uwind'       ; self.name_time_u10    = 'wind_time'
-			self.name_v10    = 'Vwind'       ; self.name_time_v10    = 'wind_time'
-			self.name_radsw  = 'swrad'       ; self.name_time_radsw  = 'srf_time'
-			self.name_radlw  = 'lwrad_down'  ; self.name_time_radlw  = 'lrf_time'
-			self.name_precip = 'rain'        ; self.name_time_precip = 'rain_time'
-			self.name_snow   = 'rain'        ; self.name_time_snow   = 'rain_time'
-			self.name_msl    = 'Pair'        ; self.name_time_msl    = 'pair_time'
-			self.drownexe    = 'mask_drown_field_roms.x'
-		else:
-			self.name_t2     = 't2'          ; self.name_time_t2     = 'time'
-			self.name_q2     = 'q2'          ; self.name_time_q2     = 'time'
-			self.name_u10    = 'u10'         ; self.name_time_u10    = 'time'
-			self.name_v10    = 'v10'         ; self.name_time_v10    = 'time'
-			self.name_radsw  = 'radsw'       ; self.name_time_radsw  = 'time'
-			self.name_radlw  = 'radlw'       ; self.name_time_radlw  = 'time'
-			self.name_precip = 'precip'      ; self.name_time_precip = 'time'
-			self.name_snow   = 'snow'        ; self.name_time_snow   = 'time'
-			self.name_msl    = 'msl'         ; self.name_time_msl    = 'time'
-			self.name_tcc    = 'tcc'         ; self.name_time_tcc    = 'time'
-			self.drownexe    = 'mask_drown_field.x'
-                return None
-
-	def __call__(self):
-
-		for var in self.listvar:
-			exec('filein = self.file_' + var)
-			exec('varin = self.name_' + var)
-			exec('timevar = self.name_time_' + var)
-			command = self.create_drown_command(filein,varin,timevar)
-			os.system(command)
-		return None
-
-	def _fileout_name(self,filein):
-		filetmp = filein.replace('/',' ').split()[-1]
-		fileout = 'drowned_' + filetmp
-		return fileout
-
-	def create_drown_command(self,filein,varin,timevar):
-		fileout = self._fileout_name(filein)
-		if self.target_model == 'ROMS':
-			command = self.sosie_dir + self.drownexe + ' -D -i ' + filein + ' -v ' + varin + ' -t ' + timevar + \
-			' -w ' + timevar + ' -m ' + self.lsm_file + ' -o ' + self.output_dir + fileout
-		else:
-			command = self.sosie_dir + self.drownexe + ' -D -i ' + filein + ' -v ' + varin + ' -t ' + timevar + \
-			' -m ' + self.lsm_file + ' -o ' + self.output_dir + fileout
-		return command
 
