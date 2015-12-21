@@ -1,0 +1,10 @@
+# To obtain observation data :
+# Pre-Req : sosie, data from NSIDC 
+
+1. Run ./get_POLES.bash
+
+it downloads original data, create a mask and run sosie interpolation onto ERAinterim grid
+
+2. Edit get_NSIDC.py to point to directory where NSIDC data is stored then run it ./get_NSIDC.py
+
+it makes the monthly mean for 1979-1998 and rewrites it in a more suitable file
