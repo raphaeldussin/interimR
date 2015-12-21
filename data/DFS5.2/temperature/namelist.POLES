@@ -187,7 +187,7 @@ cf_lsm_out = '../../masks/lsm_erainterim_roms.nc'
 cv_lsm_out = 'lsm'
 lmout      = T
 rmaskvalue = 1.0e+15
-lct        = F
+lct        = T
 t0         = 0.
 t_stp      = 1.
 /
