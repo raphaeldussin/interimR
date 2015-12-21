@@ -5,7 +5,7 @@ target_model      = NEMO
 original_grib_dir = /t3/workdir/raphael/ERAinterim/grib/
 original_nc_dir   = /t3/workdir/raphael/ERAinterim/nc/
 processed_nc_dir  = /t3/workdir/raphael/ERAinterim/nc_processed/
-dfs52_output_dir  = /t3/workdir/raphael/DFS4.2
+dfs52_output_dir  = /t3/workdir/raphael/DFS5.2
 lsm_file          =
 sosie_dir         =
 
@@ -15,7 +15,7 @@ last_year         = 2014
 target_model      = ROMS
 original_grib_dir = /Volumes/P4/workdir/raphael/ERAinterim_roms/grib/
 original_nc_dir   = /Volumes/P4/workdir/raphael/ERAinterim_roms/nc/
-processed_nc_dir  = /Volumes/P4/workdir/raphael/ERAinterim_roms/nc_processed/
+processed_nc_dir  = /Volumes/P1/Data/ERAinterim/
 dfs52_output_dir  = /Volumes/P4/workdir/raphael/DFS5.2/
 lsm_file          = /Volumes/P4/workdir/raphael/ERAinterim_roms/lsm_erainterim_roms.nc
 sosie_dir         = /opt/esm-soft/sosie/bin/

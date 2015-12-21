@@ -68,3 +68,49 @@ def finalize_ncfile(fid):
         fid.close()
         return None
 
+def write_ncfile(lon_array,lat_array,time,var,dict_wrt):
+	fid = nc.Dataset(dict_wrt['fileout'], 'w', format='NETCDF3_CLASSIC')
+        fid.description = dict_wrt['description']
+	# dimensions
+	fid.createDimension('lat', lat_array.shape[0])
+	fid.createDimension('lon', lon_array.shape[0])
+	fid.createDimension(dict_wrt['time_dim'], None)
+	# variables
+	latitudes  = fid.createVariable('lat', 'f8', ('lat',))
+	longitudes = fid.createVariable('lon', 'f8', ('lon',))
+	times      = fid.createVariable(dict_wrt['time_var'], 'f8', (dict_wrt['time_dim'],))
+	variable   = fid.createVariable(dict_wrt['varname'], 'f4', (dict_wrt['time_dim'],'lat','lon',),fill_value=dict_wrt['spval'])
+
+	# attributes
+	longitudes.units = "degrees_east"
+	longitudes.valid_min = lon_array.min()
+	longitudes.valid_max = lon_array.max()
+	longitudes.long_name = "longitude"
+	
+	latitudes.units = "degrees_north"
+	latitudes.valid_min = lat_array.min()
+	latitudes.valid_max = lat_array.max()
+	latitudes.long_name = "latitude"
+	
+	times.units = "days since " + dict_wrt['reftime'].isoformat()
+	times.valid_min = time.min()
+	times.valid_max = time.max()
+	times.calendar = "LEAP"
+	
+	variable.long_name = dict_wrt['long name']
+	variable.units = dict_wrt['units']
+	variable.coordinates = "lon lat"
+	variable.time = dict_wrt['time_var']
+	variable.missing_value = dict_wrt['spval']
+	variable.valid_range = var.min() , var.max()
+	
+	# data
+	latitudes[:]    = lat_array
+	longitudes[:]   = lon_array
+	times[:]        = time
+	variable[:,:,:] = var
+	
+	# close
+	fid.close()
+	return None
+
