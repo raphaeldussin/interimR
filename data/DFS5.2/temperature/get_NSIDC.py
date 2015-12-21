@@ -4,6 +4,7 @@ import netCDF4 as nc
 import numpy as np
 
 # You need a copy of NSIDC files interp on ERAinterim grid
+
 #nsidc_dir = '/fsnet/data/meom/DATA_SET/ICE_NSIDC/interp_ERAint/'
 nsidc_dir = '/Volumes/P1/Data/NSIDC/interp_ERAint/'
 
