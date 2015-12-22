@@ -5,6 +5,7 @@ import datetime as dt
 import humidity_toolbox
 import os 
 import lib_ioncdf as ioncdf
+import matplotlib.pylab as plt
 
 class DFS52_processing():
 	''' A Class to create the DFS5.2 dataset from ERAinterim '''
@@ -70,16 +71,16 @@ class DFS52_processing():
 		#	self.process_snow_to_daily()
 		if self.dict_input.has_key('file_radlw'):
 			print 'Create DFS5.2 longwave file...'
-			self.process_radlw_file()
+			#self.process_radlw_file()
 		if self.dict_input.has_key('file_radsw'):
 			print 'Create DFS5.2 shortwave file...'
-			self.process_radsw_file()
+			#self.process_radsw_file()
 		#if self.dict_input.has_key('file_d2'):
 		#	print 'Create specific humidity file...'
 		#	self.create_q2_file()
-		#if self.dict_input.has_key('file_t2'):
-		#	print 'Processing t2 file...'
-		#	self.process_t2_file()
+		if self.dict_input.has_key('file_t2'):
+			print 'Create DFS5.2 t2 file...'
+			self.process_t2_file()
 		#if self.dict_input.has_key('file_msl'):
 		#	print 'Rewrite msl file...'
 		#	self.process_msl_file()
@@ -88,10 +89,10 @@ class DFS52_processing():
 		#	self.process_tcc_file()
 		if self.dict_input.has_key('file_u10'):
 			print 'Create DFS5.2 u10 file...'
-			self.process_u10_file()
+			#self.process_u10_file()
 		if self.dict_input.has_key('file_v10'):
 			print 'Create DFS5.2 v10 file...'
-			self.process_v10_file()
+			#self.process_v10_file()
 		return None
 
 	#------------------ Meta functions ------------------------------------------
@@ -247,7 +248,7 @@ class DFS52_processing():
 			v10_out[kt,:,:] = v10_tmp[:,:] + v10_background[:,:]
                 # output file informations
 		if self.target_model == 'ROMS':
-	                my_dict = {'varname':'vwind','time_dim':'wind_time','time_var':'wind_time','long name':'Meridional wind speed at 10m',\
+	                my_dict = {'varname':'Vwind','time_dim':'wind_time','time_var':'wind_time','long name':'Meridional wind speed at 10m',\
 	                'units':'m/s','fileout':self.output_dir + 'v10_' + self.dataset + '_' + str(self.year) + '_ROMS.nc'}
 		elif self.target_model == 'NEMO':
 	                my_dict = {'varname':'v10','time_dim':'time','time_var':'time','long name':'Meridional wind speed at 10m',\
@@ -266,3 +267,69 @@ class DFS52_processing():
 		v10_tmp = None ; v10_out = None
 		return None
 
+	def process_t2_file(self):
+		''' Create Air temperature file '''
+		t2_tmp = np.empty((self.ny,self.nx))
+		t2_out = np.empty((self.nframes,self.ny,self.nx))
+                # open input file
+                fid_t2 = ioncdf.opennc(self.file_t2)
+                # read coordinates and time
+                lon  = ioncdf.readnc(fid_t2,'lon')
+                lat  = ioncdf.readnc(fid_t2,'lat')
+                time = ioncdf.readnc(fid_t2,self.name_time_t2)
+	
+		#------- Antarctic correction --------
+		# make sure that we use latitude from south to north
+		if self.target_model == 'ROMS':
+			lat_s2n = lat
+		else:
+			lat_s2n = lat[::-1]
+
+		value_south = -2.0 # we remove 2 degrees C
+		lattrans1   = -60 # start linear transition to correction at 60S
+		lattrans2   = -75 # correction is at full value at 75S
+		jtrans1 = (np.abs(lat_s2n-lattrans1)).argmin()
+		jtrans2 = (np.abs(lat_s2n-lattrans2)).argmin()
+
+		correction_south = np.zeros((self.ny,self.nx))
+		correction_south[0:jtrans2,:] = value_south
+		for jj in np.arange(jtrans2,jtrans1):
+			correction_south[jj,:] = value_south * float(jj - jtrans1) / float(jtrans2 - jtrans1)
+
+		if not self.target_model == 'ROMS':
+			correction_south = correction_south[::-1,:]
+
+		# run the computation
+		for kt in np.arange(0,self.nframes):
+			t2_tmp[:,:]    = ioncdf.readnc_oneframe(fid_t2,self.name_t2,kt)
+			t2_out[kt,:,:] = t2_tmp[:,:] + correction_south[:,:]
+
+
+
+
+
+
+
+
+
+
+                # output file informations
+		if self.target_model == 'ROMS':
+	                my_dict = {'varname':'Tair','time_dim':'tair_time','time_var':'tair_time','long name':'Air Temperature at 2m',\
+	                'units':'degC','fileout':self.output_dir + 't2_' + self.dataset + '_' + str(self.year) + '_ROMS.nc'}
+		elif self.target_model == 'NEMO':
+	                my_dict = {'varname':'t2','time_dim':'time','time_var':'time','long name':'Air Temperature at 2m',\
+	                'units':'degC','fileout':self.output_dir + 't2_' + self.dataset + '_' + str(self.year) + '.nc'}
+		my_dict['description'] = 'DFS 5.2 (MEOM/LGGE) contact : raphael.dussin@gmail.com'
+		my_dict['spval']          = self.spval
+		my_dict['reftime']        = self.reftime
+		my_dict['var_valid_min']  = t2_out.min()
+		my_dict['var_valid_max']  = t2_out.max()
+		my_dict['time_valid_min'] = time.min()
+		my_dict['time_valid_max'] = time.max()
+                # close input file and write output
+                ioncdf.closenc(fid_t2)
+	        ioncdf.write_ncfile(lon,lat,time,t2_out,my_dict)
+		# clear arrays
+		t2_tmp = None ; t2_out = None
+		return None
