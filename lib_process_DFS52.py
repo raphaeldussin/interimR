@@ -26,8 +26,10 @@ class DFS52_processing():
 		# set time related stuff
 		if calendar.isleap(self.year):
 			self.ndays = 366
+			self.days_in_month = np.array([31.,29.,31.,30.,31.,30.,31.,31.,30.,31.,30.,31.])
 		else:
 			self.ndays = 365
+			self.days_in_month = np.array([31.,28.,31.,30.,31.,30.,31.,31.,30.,31.,30.,31.])
 		# forcing set freq
 		if self.freq == '3h':
 			self.nframes_per_day = 8
@@ -60,6 +62,10 @@ class DFS52_processing():
 			self.name_snow   = 'snow'        ; self.name_time_snow   = 'time'
 			self.name_msl    = 'msl'         ; self.name_time_msl    = 'time'
 			self.name_tcc    = 'tcc'         ; self.name_time_tcc    = 'time'
+
+		fid_lsm = ioncdf.opennc(self.mask)
+		self.lsm = ioncdf.readnc(fid_lsm,'lsm')
+		ioncdf.closenc(fid_lsm)
 		return None
 
 	def __call__(self):
@@ -119,7 +125,7 @@ class DFS52_processing():
 		correct_heat_budget = 1.0088 # attempt to close heat budget 
 		for kt in np.arange(0,nframes):
 			radlw_tmp[:,:]    = ioncdf.readnc_oneframe(fid_radlw,self.name_radlw,kt)
-			radlw_out[kt,:,:] = radlw_tmp[:,:] * radlw_factor[:,:] * correct_heat_budget
+			radlw_out[kt,:,:] = (radlw_tmp[:,:] * radlw_factor[:,:] * correct_heat_budget) * self.lsm[:,:]
                 # output file informations
 		if self.target_model == 'ROMS':
                         my_dict = {'varname':'lwrad_down','time_dim':'lrf_time','time_var':'lrf_time','long name':'Downwelling longwave radiation',\
@@ -162,7 +168,7 @@ class DFS52_processing():
 		# run the computation
 		for kt in np.arange(0,nframes):
 			radsw_tmp[:,:]    = ioncdf.readnc_oneframe(fid_radsw,self.name_radsw,kt)
-			radsw_out[kt,:,:] = radsw_tmp[:,:] * radsw_factor[:,:]
+			radsw_out[kt,:,:] = (radsw_tmp[:,:] * radsw_factor[:,:]) * self.lsm[:,:]
                 # output file informations
 		if self.target_model == 'ROMS':
                         my_dict = {'varname':'swrad','time_dim':'srf_time','time_var':'srf_time','long name':'Shortwave radiation',\
@@ -203,7 +209,7 @@ class DFS52_processing():
 		# run the computation
 		for kt in np.arange(0,self.nframes):
 			u10_tmp[:,:]    = ioncdf.readnc_oneframe(fid_u10,self.name_u10,kt)
-			u10_out[kt,:,:] = u10_tmp[:,:] + u10_background[:,:]
+			u10_out[kt,:,:] = (u10_tmp[:,:] + u10_background[:,:]) * self.lsm[:,:]
                 # output file informations
 		if self.target_model == 'ROMS':
 	                my_dict = {'varname':'Uwind','time_dim':'wind_time','time_var':'wind_time','long name':'Zonal wind speed at 10m',\
@@ -245,7 +251,7 @@ class DFS52_processing():
 		# run the computation
 		for kt in np.arange(0,self.nframes):
 			v10_tmp[:,:]    = ioncdf.readnc_oneframe(fid_v10,self.name_v10,kt)
-			v10_out[kt,:,:] = v10_tmp[:,:] + v10_background[:,:]
+			v10_out[kt,:,:] = (v10_tmp[:,:] + v10_background[:,:]) * self.lsm[:,:]
                 # output file informations
 		if self.target_model == 'ROMS':
 	                my_dict = {'varname':'Vwind','time_dim':'wind_time','time_var':'wind_time','long name':'Meridional wind speed at 10m',\
@@ -299,20 +305,38 @@ class DFS52_processing():
 		if not self.target_model == 'ROMS':
 			correction_south = correction_south[::-1,:]
 
+		#------- Arctic correction --------
+		correction_north = np.zeros((self.ny,self.nx))
+
+               	fid_off = ioncdf.opennc(self.t2_poles_offset)
+		monthly_offset_poles = ioncdf.readnc(fid_off,self.name_t2)
+		ioncdf.closenc(fid_off)
+		fid_ifra = ioncdf.opennc(self.ice_nsidc)
+		monthly_ice_fraction = ioncdf.readnc(fid_ifra,'ifrac')
+		ioncdf.closenc(fid_ifra)
+
+		# poles correction north of 70 N
+		lattrans3   = 65 # correction poles transition starts at 65, full at 70N
+		jtrans3 = (np.abs(lat_s2n-lattrans3)).argmin()
+		val_oce = -0.7
+
 		# run the computation
 		for kt in np.arange(0,self.nframes):
 			t2_tmp[:,:]    = ioncdf.readnc_oneframe(fid_t2,self.name_t2,kt)
-			t2_out[kt,:,:] = t2_tmp[:,:] + correction_south[:,:]
-
-
-
-
-
-
-
-
-
-
+			#-----  arctic correction ------
+			# interp monthly offset to daily value
+			this_day = 1 + (kt / self.nframes_per_day)
+			this_day_weights = self.time_interp_weights(this_day)
+			this_day_offset  = self.interp_data_to_day(monthly_offset_poles,this_day_weights)
+			this_day_ifrac   = self.interp_data_to_day(monthly_ice_fraction,this_day_weights)
+			# compute artic correction
+			correction_north[jtrans3:,:] = this_day_offset[jtrans3:,:]*this_day_ifrac[jtrans3:,:] + \
+			                               val_oce*(1. -this_day_ifrac[jtrans3:,:])
+			if not self.target_model == 'ROMS':
+				correction_north[:,:] = correction_north[::-1,:]
+			#------ add northern and southern hemisphere correction ------
+			t2_out[kt,:,:] = (t2_tmp[:,:] + correction_north[:,:] + correction_south[:,:]) * self.lsm[:,:]
+			
                 # output file informations
 		if self.target_model == 'ROMS':
 	                my_dict = {'varname':'Tair','time_dim':'tair_time','time_var':'tair_time','long name':'Air Temperature at 2m',\
@@ -333,3 +357,39 @@ class DFS52_processing():
 		# clear arrays
 		t2_tmp = None ; t2_out = None
 		return None
+
+        def interp_data_to_day(self,data_monthly,my_weights):
+                # time interpolation of bias file
+                nt,ny,nx = data_monthly.shape
+                if ( nt != 12):
+                        print 'Error : number of frames'
+                data_thisday = np.zeros((ny,nx))
+                for kt in np.arange(12):
+                        data_thisday = data_thisday + data_monthly[kt,:,:] * my_weights[kt]
+                return data_thisday
+
+        def time_interp_weights(self,nday):
+                ''' compute weights to apply to a monthly data file
+                nday is numbers of days since begining of the year '''
+                # init to zero
+                weights = np.zeros((12))
+                # cumul of days at the middle of the month
+                cumul_days = self.days_in_month.cumsum() - (self.days_in_month / 2.)
+                # find which month is the lowest bound of the interval
+                # uses the property of python that -1 is last index
+                nmonth = -1
+                for km in np.arange(12):
+                        if ( nday >= cumul_days[km] ):
+                                nmonth = nmonth + 1
+                # distance from current day to lower bound of interval
+                dist_to_lower_bound = np.mod(nday - cumul_days[nmonth],self.ndays)
+                # distance between lower and upper bound (uses periodicity properties for nmonths and ndays)
+                interval = np.mod(cumul_days[np.mod(nmonth+1,12)] - cumul_days[np.mod(nmonth,12)],self.ndays)
+                # weight for lower and upper bound
+                wgt_1 = 1.0 - (float(dist_to_lower_bound) / interval )
+                wgt_2 = 1.0 - wgt_1
+                # change only values for lower and upper bound (all other remain zero)
+                weights[np.mod(nmonth,12)] = wgt_1
+                weights[np.mod(nmonth+1,12)] = wgt_2
+                return weights
+
