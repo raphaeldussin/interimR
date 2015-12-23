@@ -21,7 +21,7 @@ lat        = mfid_in.variables['lat'][:,0]
 mfid_in.close()
 
 # Read lan sea mask
-file_lsm = '../../masks/lsm_ERAinterim_roms.nc'
+file_lsm = '../../data/masks/lsm_ERAinterim_roms.nc'
 fid_lsm = nc.Dataset(file_lsm,'r')
 lsm = fid_lsm.variables['lsm'][:]
 fid_lsm.close()
@@ -46,7 +46,7 @@ days_in_month = np.array([31.,28.,31.,30.,31.,30.,31.,31.,30.,31.,30.,31.])
 cumul_days = days_in_month.cumsum() - (days_in_month / 2.)
 
 # write monthly climato for Ice concentration
-fid = nc.Dataset('./NSIDC_ice_fraction_monthly_clim_y1979-1998.nc', 'w', format='NETCDF3_CLASSIC')
+fid = nc.Dataset('../../data/DFS5.2/temperature/NSIDC_ice_fraction_monthly_clim_y1979-1998.nc', 'w', format='NETCDF3_CLASSIC')
 fid.description = 'Ice Fraction monthly climatology from NSIDC'
 # dimensions
 fid.createDimension('lat', ny)

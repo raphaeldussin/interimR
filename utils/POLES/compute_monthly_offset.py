@@ -14,8 +14,8 @@ else:
 	file_lsm = '../../masks/lsm_ERAinterim.nc'
 	var_name_t2 = 't2'
 
-file_t2_ERAinterim = './t2_ERAinterim_monthly_clim_y1979-1998.nc'
-file_t2_POLES = './t2_POLES-ERAinterim_monthly_clim_1979-1998.nc'
+file_t2_ERAinterim = '../../data/DFS5.2/temperature/t2_ERAinterim_monthly_clim_y1979-1998.nc'
+file_t2_POLES = '../../data/DFS5.2/temperature/t2_POLES-ERAinterim_monthly_clim_1979-1998.nc'
 
 # calendar stuff
 days_in_month          = np.array([31,28,31,30,31,30,31,31,30,31,30,31])
@@ -87,7 +87,7 @@ for month in np.arange(nt):
 offset_out[np.where(offset_out > 2.)] = 2.0
 
 # write monthly climato for t2 from ERAinterim
-fid = nc.Dataset('./monthly_offset.nc', 'w', format='NETCDF3_CLASSIC')
+fid = nc.Dataset('../../data/DFS5.2/temperature/monthly_offset.nc', 'w', format='NETCDF3_CLASSIC')
 fid.description = 'offset POLES - ERAinterim'
 # dimensions
 fid.createDimension('lat', ny)

@@ -9,12 +9,12 @@ model = 'ROMS'
 
 if model == 'ROMS':
 	dir_ERAinterim = '/Volumes/P1/Data/ERAinterim/'
-	file_lsm = dir_ERAinterim + 'lsm_ERAinterim_roms.nc'
+	file_lsm = '../../data/masks/lsm_ERAinterim_roms.nc'
 	fileroot_ERAinterim = dir_ERAinterim + 'drowned_t2_ERAinterim_<YYYY>_ROMS.nc'
 	var_name_t2 = 'Tair'
 else:
 	dir_ERAinterim = ''
-	file_lsm = dir_ERAinterim + 'lsm_ERAinterim.nc'
+	file_lsm = '../../data/masks/lsm_ERAinterim.nc'
 	fileroot_ERAinterim = dir_ERAinterim + 'drowned_t2_ERAinterim_<YYYY>.nc'
 	var_name_t2 = 't2'
 
@@ -66,7 +66,7 @@ for month in np.arange(12):
 	t2_monthly_mean[month,:,:] = t2_monthly_sum[month,:,:] / nframes_sum[month]
 
 # write monthly climato for t2 from ERAinterim
-fid = nc.Dataset('./t2_ERAinterim_monthly_clim_y1979-1998.nc', 'w', format='NETCDF3_CLASSIC')
+fid = nc.Dataset('../../data/DFS5.2/temperature/t2_ERAinterim_monthly_clim_y1979-1998.nc', 'w', format='NETCDF3_CLASSIC')
 fid.description = 'Air temperature monthly climatology from ERAinterim'
 # dimensions
 fid.createDimension('lat', ny)

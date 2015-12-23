@@ -25,3 +25,30 @@
   ENDDO
 
   END SUBROUTINE
+
+  SUBROUTINE QSAT_FROM_T2_AND_MSL(rt, rp, nx, nyq_sat)
+  
+  IMPLICIT NONE
+
+  INTEGER,INTENT(in) :: nx,ny
+  REAL(4), DIMENSION(ny,nx), INTENT(out) :: q_sat   !: vapour pressure at saturation  [Pa]
+  REAL(4), DIMENSION(ny,nx), INTENT(in)  :: rt, rp  !: temperature (K), pression (Pa)
+
+  INTEGER :: ji,jj
+  REAL(4)  :: es
+  REAL(4), PARAMETER :: eps = 0.62197
+
+  DO ji=1,nx   ! outer loop
+    DO jj=1,ny ! inner loop
+
+    es = 100*( 10**(10.79574*(1 - 273.16/rt(jj,ji)) - 5.028*LOG10(rt(jj,ji)/273.16)       &
+         &       + 1.50475*10**(-4)*(1 - 10**(-8.2969*(rt(jj,ji)/273.16 - 1)) )           &
+         &       + 0.42873*10**(-3)*(10**(4.76955*(1 - 273.16/rt(jj,ji))) - 1) + 0.78614) )
+
+    q_sat(jj,ji) = eps*es/(rp(jj,ji) - (1 - eps)*es)
+
+    ENDDO
+  ENDDO
+
+  END SUBROUTINE 
+
