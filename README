@@ -33,7 +33,7 @@ which years to process and for what is the target model (changes variable names,
 
 # example ./get_ERAinterim.py RD-triton
 #-----------------------------------------------------------------------------------------------------
-# process ERAinterim (takes me 11min per year on cluster / 50 min on macpro)
+# process ERAinterim 
 
 ./process_ERAinterim.py myentry
 
@@ -45,4 +45,13 @@ which years to process and for what is the target model (changes variable names,
 
 # example ./drown_ERAinterim.py RD-triton
 # NB: it is possible to process a smaller number of variables by editing the listvar
+
+#-----------------------------------------------------------------------------------------------------
+# process DFS5.2
+
+./process_DFS2.py myentry
+
+#-----------------------------------------------------------------------------------------------------
+# drown DFS5.2
+./drown_DFS52.py myentry
 

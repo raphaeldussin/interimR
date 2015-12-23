@@ -81,12 +81,12 @@ class DFS52_processing():
 		if self.dict_input.has_key('file_radsw'):
 			print 'Create DFS5.2 shortwave file...'
 			#self.process_radsw_file()
-		#if self.dict_input.has_key('file_d2'):
-		#	print 'Create specific humidity file...'
-		#	self.create_q2_file()
 		if self.dict_input.has_key('file_t2'):
 			print 'Create DFS5.2 t2 file...'
 			self.process_t2_file()
+		if self.dict_input.has_key('file_q2'):
+			print 'Create DFS5.2 q2 file...'
+			self.process_q2_file()
 		#if self.dict_input.has_key('file_msl'):
 		#	print 'Rewrite msl file...'
 		#	self.process_msl_file()
@@ -114,7 +114,7 @@ class DFS52_processing():
                 lat  = ioncdf.readnc(fid_tcc,'lat')
                 time = ioncdf.readnc(fid_tcc,self.name_time_tcc)
 		# copy
-		for kt in np.arange(0,nframes):
+		for kt in np.arange(0,self.nframes):
 			tcc_tmp[:,:]    = ioncdf.readnc_oneframe(fid_tcc,self.name_tcc,kt)
 			tcc_out[kt,:,:] = (tcc_tmp[:,:]) * self.lsm[:,:]
                 # output file informations
@@ -149,7 +149,7 @@ class DFS52_processing():
                 lat  = ioncdf.readnc(fid_msl,'lat')
                 time = ioncdf.readnc(fid_msl,self.name_time_msl)
 		# copy
-		for kt in np.arange(0,nframes):
+		for kt in np.arange(0,self.nframes):
 			msl_tmp[:,:]    = ioncdf.readnc_oneframe(fid_msl,self.name_msl,kt)
 			msl_out[kt,:,:] = (msl_tmp[:,:]) * self.lsm[:,:]
                 # output file informations
@@ -462,7 +462,66 @@ class DFS52_processing():
 	        ioncdf.write_ncfile(lon,lat,time,t2_out,my_dict)
 		# clear arrays
 		t2_tmp = None ; t2_out = None
+		# save this for q2
+		self.file_t2_new = my_dict['fileout']
 		return None
+
+	def process_q2_file(self):
+		''' Create q2 file '''
+		t2_old = np.empty((self.ny,self.nx))
+		t2_new = np.empty((self.ny,self.nx))
+		msl    = np.empty((self.ny,self.nx))
+		q2_tmp = np.empty((self.ny,self.nx))
+		q2_out = np.empty((self.nframes,self.ny,self.nx))
+                # open input file
+                fid_q2 = ioncdf.opennc(self.file_q2)
+                # read coordinates and time
+                lon  = ioncdf.readnc(fid_q2,'lon')
+                lat  = ioncdf.readnc(fid_q2,'lat')
+                time = ioncdf.readnc(fid_q2,self.name_time_q2)
+
+		# We need original t2 and msl from ERAinterim
+		fid_t2old = ioncdf.opennc(self.file_t2)
+		fid_msl   = ioncdf.opennc(self.file_msl)
+		fid_t2new = ioncdf.opennc(self.file_t2_new)
+		# run the computation
+		for kt in np.arange(0,self.nframes):
+			# read all the fields
+			t2_old[:,:]    = ioncdf.readnc_oneframe(fid_t2old,self.name_t2,kt)
+			t2_new[:,:]    = ioncdf.readnc_oneframe(fid_t2new,self.name_t2,kt)
+			msl[:,:]       = ioncdf.readnc_oneframe(fid_msl,self.name_msl,kt)
+			q2_tmp[:,:]    = ioncdf.readnc_oneframe(fid_q2,self.name_q2,kt)
+			# compute humidity at saturation
+			q_sat_new = humidity_toolbox.qsat_from_t2_and_msl(t2_new,msl)
+			q_sat_old = humidity_toolbox.qsat_from_t2_and_msl(t2_old,msl)
+			print q_sat_new.shape
+			print q_sat_old.shape
+			# compute new specific humidity
+			q2_out[kt,:,:] = (q2_tmp[:,:] * q_sat_new / q_sat_old) * self.lsm[:,:]
+
+                # output file informations
+		if self.target_model == 'ROMS':
+                        my_dict = {'varname':'Qair','time_dim':'qair_time','time_var':'qair_time','long name':'Specific Humidity',\
+                        'units':'kg/kg','fileout':self.output_dir + 'q2_' + self.dataset + '_' + str(self.year) + '_ROMS.nc'}
+                elif self.target_model == 'NEMO':
+                        my_dict = {'varname':'q2','time_dim':'time','time_var':'time','long name':'Specific Humidity',\
+                        'units':'kg/kg','fileout':self.output_dir + 'q2_' + self.dataset + '_' + str(self.year) + '.nc'}
+		my_dict['description'] = 'DFS 5.2 (MEOM/LGGE) contact : raphael.dussin@gmail.com'
+		my_dict['spval']          = self.spval
+		my_dict['reftime']        = self.reftime
+		my_dict['time_valid_min'] = time.min()
+		my_dict['time_valid_max'] = time.max()
+		my_dict['var_valid_min']  = q2_out.min()
+		my_dict['var_valid_max']  = q2_out.max()
+                # close input file and write output
+                ioncdf.closenc(fid_q2)
+	        ioncdf.write_ncfile(lon,lat,time,q2_out,my_dict)
+		# clear arrays
+		q2_tmp = None ; q2_out = None
+		return None
+
+
+
 
 	#------------------- Time interpolation ---------------------------------------------------------
         def interp_data_to_day(self,data_monthly,my_weights):

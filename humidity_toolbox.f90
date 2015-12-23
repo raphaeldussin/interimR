@@ -8,8 +8,8 @@
   REAL(4),DIMENSION(ny,nx),INTENT(out) :: Q2
 
   INTEGER :: ji,jj
-  REAL(8), PARAMETER :: reps = 0.62197
-  REAL(8) :: psat
+  REAL(4), PARAMETER :: reps = 0.62197
+  REAL(4) :: psat
 
 
   DO ji=1,nx   ! outer loop
@@ -26,13 +26,14 @@
 
   END SUBROUTINE
 
-  SUBROUTINE QSAT_FROM_T2_AND_MSL(rt, rp, nx, nyq_sat)
+  SUBROUTINE QSAT_FROM_T2_AND_MSL(rt,rp,nx,ny,q_sat)
   
   IMPLICIT NONE
 
   INTEGER,INTENT(in) :: nx,ny
   REAL(4), DIMENSION(ny,nx), INTENT(out) :: q_sat   !: vapour pressure at saturation  [Pa]
-  REAL(4), DIMENSION(ny,nx), INTENT(in)  :: rt, rp  !: temperature (K), pression (Pa)
+  REAL(4), DIMENSION(ny,nx), INTENT(in)  :: rt, rp  !: temperature (C), pression (Pa)
+  REAL(4), DIMENSION(ny,nx) :: rtk                  !: temperature (K)
 
   INTEGER :: ji,jj
   REAL(4)  :: es
@@ -41,11 +42,13 @@
   DO ji=1,nx   ! outer loop
     DO jj=1,ny ! inner loop
 
-    es = 100*( 10**(10.79574*(1 - 273.16/rt(jj,ji)) - 5.028*LOG10(rt(jj,ji)/273.16)       &
-         &       + 1.50475*10**(-4)*(1 - 10**(-8.2969*(rt(jj,ji)/273.16 - 1)) )           &
-         &       + 0.42873*10**(-3)*(10**(4.76955*(1 - 273.16/rt(jj,ji))) - 1) + 0.78614) )
+    rtk(jj,ji) = rt(jj,ji) + 273.15
 
-    q_sat(jj,ji) = eps*es/(rp(jj,ji) - (1 - eps)*es)
+    es = 100*( 10**(10.79574*(1 - 273.16/rtk(jj,ji)) - 5.028*LOG10(rtk(jj,ji)/273.16)      &
+         &       + 1.50475*10**(-4)*(1 - 10**(-8.2969*(rtk(jj,ji)/273.16 - 1)) )           &
+         &       + 0.42873*10**(-3)*(10**(4.76955*(1 - 273.16/rtk(jj,ji))) - 1) + 0.78614) )
+
+    q_sat(jj,ji) = eps*es/(rp(jj,ji) - (1. - eps)*es)
 
     ENDDO
   ENDDO
