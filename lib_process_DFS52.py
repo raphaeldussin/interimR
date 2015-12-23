@@ -103,6 +103,112 @@ class DFS52_processing():
 
 	#------------------ Meta functions ------------------------------------------
 
+	def process_tcc_file(self):
+		''' Create tcc file '''
+		tcc_tmp = np.empty((self.ny,self.nx))
+		tcc_out = np.empty((self.nframes,self.ny,self.nx))
+                # open input file
+                fid_tcc = ioncdf.opennc(self.file_tcc)
+                # read coordinates and time
+                lon  = ioncdf.readnc(fid_tcc,'lon')
+                lat  = ioncdf.readnc(fid_tcc,'lat')
+                time = ioncdf.readnc(fid_tcc,self.name_time_tcc)
+		# copy
+		for kt in np.arange(0,nframes):
+			tcc_tmp[:,:]    = ioncdf.readnc_oneframe(fid_tcc,self.name_tcc,kt)
+			tcc_out[kt,:,:] = (tcc_tmp[:,:]) * self.lsm[:,:]
+                # output file informations
+		if self.target_model == 'ROMS':
+                        my_dict = {'varname':'Cloud','time_dim':'cloud_time','time_var':'cloud_time','long name':'Total Cloud Cover',\
+                        'units':'','fileout':self.output_dir + 'tcc_' + self.dataset + '_' + str(self.year) + '_ROMS.nc'}
+                elif self.target_model == 'NEMO':
+                        my_dict = {'varname':'tcc','time_dim':'time','time_var':'time','long name':'Total Cloud Cover',\
+                        'units':'','fileout':self.output_dir + 'tcc_' + self.dataset + '_' + str(self.year) + '.nc'}
+		my_dict['description'] = 'DFS 5.2 (MEOM/LGGE) contact : raphael.dussin@gmail.com'
+		my_dict['spval']          = self.spval
+		my_dict['reftime']        = self.reftime
+		my_dict['time_valid_min'] = time.min()
+		my_dict['time_valid_max'] = time.max()
+		my_dict['var_valid_min']  = tcc_out.min()
+		my_dict['var_valid_max']  = tcc_out.max()
+                # close input file and write output
+                ioncdf.closenc(fid_tcc)
+	        ioncdf.write_ncfile(lon,lat,time,tcc_out,my_dict)
+		# clear arrays
+		tcc_tmp = None ; tcc_out = None
+		return None
+
+	def process_msl_file(self):
+		''' Create msl file '''
+		msl_tmp = np.empty((self.ny,self.nx))
+		msl_out = np.empty((self.nframes,self.ny,self.nx))
+                # open input file
+                fid_msl = ioncdf.opennc(self.file_msl)
+                # read coordinates and time
+                lon  = ioncdf.readnc(fid_msl,'lon')
+                lat  = ioncdf.readnc(fid_msl,'lat')
+                time = ioncdf.readnc(fid_msl,self.name_time_msl)
+		# copy
+		for kt in np.arange(0,nframes):
+			msl_tmp[:,:]    = ioncdf.readnc_oneframe(fid_msl,self.name_msl,kt)
+			msl_out[kt,:,:] = (msl_tmp[:,:]) * self.lsm[:,:]
+                # output file informations
+		if self.target_model == 'ROMS':
+                        my_dict = {'varname':'Pair','time_dim':'pair_time','time_var':'pair_time','long name':'Mean Sea Level Pressure',\
+                        'units':'Pa','fileout':self.output_dir + 'msl_' + self.dataset + '_' + str(self.year) + '_ROMS.nc'}
+                elif self.target_model == 'NEMO':
+                        my_dict = {'varname':'msl','time_dim':'time','time_var':'time','long name':'Mean Sea Level Pressure',\
+                        'units':'Pa','fileout':self.output_dir + 'msl_' + self.dataset + '_' + str(self.year) + '.nc'}
+		my_dict['description'] = 'DFS 5.2 (MEOM/LGGE) contact : raphael.dussin@gmail.com'
+		my_dict['spval']          = self.spval
+		my_dict['reftime']        = self.reftime
+		my_dict['time_valid_min'] = time.min()
+		my_dict['time_valid_max'] = time.max()
+		my_dict['var_valid_min']  = msl_out.min()
+		my_dict['var_valid_max']  = msl_out.max()
+                # close input file and write output
+                ioncdf.closenc(fid_msl)
+	        ioncdf.write_ncfile(lon,lat,time,msl_out,my_dict)
+		# clear arrays
+		msl_tmp = None ; msl_out = None
+		return None
+
+	def process_snow_file(self):
+		''' Create snow fall file '''
+		nframes   = self.nframes / self.nframes_per_day # daily file
+		snow_tmp = np.empty((self.ny,self.nx))
+		snow_out = np.empty((nframes,self.ny,self.nx))
+                # open input file
+                fid_snow = ioncdf.opennc(self.file_snow)
+                # read coordinates and time
+                lon  = ioncdf.readnc(fid_snow,'lon')
+                lat  = ioncdf.readnc(fid_snow,'lat')
+                time = ioncdf.readnc(fid_snow,self.name_time_snow)
+		# copy
+		for kt in np.arange(0,nframes):
+			snow_tmp[:,:]    = ioncdf.readnc_oneframe(fid_snow,self.name_snow,kt)
+			snow_out[kt,:,:] = (snow_tmp[:,:]) * self.lsm[:,:]
+                # output file informations
+		if self.target_model == 'ROMS':
+                        my_dict = {'varname':'snow','time_dim':'snow_time','time_var':'snow_time','long name':'Snow Fall',\
+                        'units':'kg.m-2.s-1','fileout':self.output_dir + 'snow_' + self.dataset + '_' + str(self.year) + '_ROMS.nc'}
+                elif self.target_model == 'NEMO':
+                        my_dict = {'varname':'snow','time_dim':'time','time_var':'time','long name':'Snow Fall',\
+                        'units':'kg.m-2.s-1','fileout':self.output_dir + 'snow_' + self.dataset + '_' + str(self.year) + '.nc'}
+		my_dict['description'] = 'DFS 5.2 (MEOM/LGGE) contact : raphael.dussin@gmail.com'
+		my_dict['spval']          = self.spval
+		my_dict['reftime']        = self.reftime
+		my_dict['time_valid_min'] = time.min()
+		my_dict['time_valid_max'] = time.max()
+		my_dict['var_valid_min']  = snow_out.min()
+		my_dict['var_valid_max']  = snow_out.max()
+                # close input file and write output
+                ioncdf.closenc(fid_snow)
+	        ioncdf.write_ncfile(lon,lat,time,snow_out,my_dict)
+		# clear arrays
+		snow_tmp = None ; snow_out = None
+		return None
+
 	def process_radlw_file(self):
 		''' Create longwave radiation file '''
 		nframes   = self.nframes / self.nframes_per_day # daily file
@@ -358,6 +464,7 @@ class DFS52_processing():
 		t2_tmp = None ; t2_out = None
 		return None
 
+	#------------------- Time interpolation ---------------------------------------------------------
         def interp_data_to_day(self,data_monthly,my_weights):
                 # time interpolation of bias file
                 nt,ny,nx = data_monthly.shape
