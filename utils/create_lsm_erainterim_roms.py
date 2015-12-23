@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import netCDF4 as nc
 
 def readnc(filein,varin):
@@ -7,7 +9,7 @@ def readnc(filein,varin):
 	return out
 
 def write_lsm(lon_array,lat_array,var):
-                fid = nc.Dataset('./lsm_erainterim_roms.nc','w', format='NETCDF3_CLASSIC')
+                fid = nc.Dataset('../data/masks/lsm_erainterim_roms.nc','w', format='NETCDF3_CLASSIC')
                 fid.description = 'ERAinterim post-processing (raphael.dussin@gmail.com)'
                 # dimensions
                 fid.createDimension('lat', lat_array.shape[0])
@@ -42,7 +44,7 @@ def write_lsm(lon_array,lat_array,var):
 
 
 
-filelsm_nemo = '/Volumes/P4/workdir/raphael/ERAinterim_roms/lsm_erainterim.nc'
+filelsm_nemo = '../data/masks/lsm_erainterim.nc'
 
 lon = readnc(filelsm_nemo,'lon0')
 lat = readnc(filelsm_nemo,'lat0')
