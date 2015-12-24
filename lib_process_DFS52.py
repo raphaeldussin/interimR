@@ -69,36 +69,36 @@ class DFS52_processing():
 		return None
 
 	def __call__(self):
-		#if self.dict_input.has_key('file_precip'):
-		#	print 'Processing precip file...'
-		#	self.process_precip_to_daily()
-		#if self.dict_input.has_key('file_snow'):
-		#	print 'Processing snow file...'
-		#	self.process_snow_to_daily()
+		if self.dict_input.has_key('file_precip'):
+			print 'Rewrite precip file...'
+			self.process_precip_file()
+		if self.dict_input.has_key('file_snow'):
+			print 'Rewrite snow file...'
+			self.process_snow_file()
 		if self.dict_input.has_key('file_radlw'):
 			print 'Create DFS5.2 longwave file...'
-			#self.process_radlw_file()
+			self.process_radlw_file()
 		if self.dict_input.has_key('file_radsw'):
 			print 'Create DFS5.2 shortwave file...'
-			#self.process_radsw_file()
+			self.process_radsw_file()
 		if self.dict_input.has_key('file_t2'):
 			print 'Create DFS5.2 t2 file...'
 			self.process_t2_file()
 		if self.dict_input.has_key('file_q2'):
 			print 'Create DFS5.2 q2 file...'
 			self.process_q2_file()
-		#if self.dict_input.has_key('file_msl'):
-		#	print 'Rewrite msl file...'
-		#	self.process_msl_file()
-		#if self.dict_input.has_key('file_tcc'):
-		#	print 'Rewrite tcc file...'
-		#	self.process_tcc_file()
+		if self.dict_input.has_key('file_msl'):
+			print 'Rewrite msl file...'
+			self.process_msl_file()
+		if self.dict_input.has_key('file_tcc'):
+			print 'Rewrite tcc file...'
+			self.process_tcc_file()
 		if self.dict_input.has_key('file_u10'):
 			print 'Create DFS5.2 u10 file...'
-			#self.process_u10_file()
+			self.process_u10_file()
 		if self.dict_input.has_key('file_v10'):
 			print 'Create DFS5.2 v10 file...'
-			#self.process_v10_file()
+			self.process_v10_file()
 		return None
 
 	#------------------ Meta functions ------------------------------------------
@@ -190,7 +190,7 @@ class DFS52_processing():
 			snow_out[kt,:,:] = (snow_tmp[:,:]) * self.lsm[:,:]
                 # output file informations
 		if self.target_model == 'ROMS':
-                        my_dict = {'varname':'snow','time_dim':'snow_time','time_var':'snow_time','long name':'Snow Fall',\
+                        my_dict = {'varname':'rain','time_dim':'rain_time','time_var':'rain_time','long name':'Snow Fall',\
                         'units':'kg.m-2.s-1','fileout':self.output_dir + 'snow_' + self.dataset + '_' + str(self.year) + '_ROMS.nc'}
                 elif self.target_model == 'NEMO':
                         my_dict = {'varname':'snow','time_dim':'time','time_var':'time','long name':'Snow Fall',\
@@ -207,6 +207,42 @@ class DFS52_processing():
 	        ioncdf.write_ncfile(lon,lat,time,snow_out,my_dict)
 		# clear arrays
 		snow_tmp = None ; snow_out = None
+		return None
+
+	def process_precip_file(self):
+		''' Create precip file '''
+		nframes   = self.nframes / self.nframes_per_day # daily file
+		precip_tmp = np.empty((self.ny,self.nx))
+		precip_out = np.empty((nframes,self.ny,self.nx))
+                # open input file
+                fid_precip = ioncdf.opennc(self.file_precip)
+                # read coordinates and time
+                lon  = ioncdf.readnc(fid_precip,'lon')
+                lat  = ioncdf.readnc(fid_precip,'lat')
+                time = ioncdf.readnc(fid_precip,self.name_time_precip)
+		# copy
+		for kt in np.arange(0,nframes):
+			precip_tmp[:,:]    = ioncdf.readnc_oneframe(fid_precip,self.name_precip,kt)
+			precip_out[kt,:,:] = (precip_tmp[:,:]) * self.lsm[:,:]
+                # output file informations
+		if self.target_model == 'ROMS':
+                        my_dict = {'varname':'rain','time_dim':'rain_time','time_var':'rain_time','long name':'Total Precipitation',\
+                        'units':'kg.m-2.s-1','fileout':self.output_dir + 'precip_' + self.dataset + '_' + str(self.year) + '_ROMS.nc'}
+                elif self.target_model == 'NEMO':
+                        my_dict = {'varname':'precip','time_dim':'time','time_var':'time','long name':'Total Precipitation',\
+                        'units':'kg.m-2.s-1','fileout':self.output_dir + 'precip_' + self.dataset + '_' + str(self.year) + '.nc'}
+		my_dict['description'] = 'DFS 5.2 (MEOM/LGGE) contact : raphael.dussin@gmail.com'
+		my_dict['spval']          = self.spval
+		my_dict['reftime']        = self.reftime
+		my_dict['time_valid_min'] = time.min()
+		my_dict['time_valid_max'] = time.max()
+		my_dict['var_valid_min']  = precip_out.min()
+		my_dict['var_valid_max']  = precip_out.max()
+                # close input file and write output
+                ioncdf.closenc(fid_precip)
+	        ioncdf.write_ncfile(lon,lat,time,precip_out,my_dict)
+		# clear arrays
+		precip_tmp = None ; precip_out = None
 		return None
 
 	def process_radlw_file(self):
@@ -494,8 +530,6 @@ class DFS52_processing():
 			# compute humidity at saturation
 			q_sat_new = humidity_toolbox.qsat_from_t2_and_msl(t2_new,msl)
 			q_sat_old = humidity_toolbox.qsat_from_t2_and_msl(t2_old,msl)
-			print q_sat_new.shape
-			print q_sat_old.shape
 			# compute new specific humidity
 			q2_out[kt,:,:] = (q2_tmp[:,:] * q_sat_new / q_sat_old) * self.lsm[:,:]
 

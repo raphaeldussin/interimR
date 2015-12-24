@@ -17,7 +17,7 @@ original_grib_dir = /Volumes/P4/workdir/raphael/ERAinterim_roms/grib/
 original_nc_dir   = /Volumes/P4/workdir/raphael/ERAinterim_roms/nc/
 processed_nc_dir  = /Volumes/P1/Data/ERAinterim/
 dfs52_output_dir  = /Volumes/P4/workdir/raphael/DFS5.2/
-lsm_file          = /Volumes/P4/workdir/raphael/ERAinterim_roms/lsm_erainterim_roms.nc
+lsm_file          = ./data/masks/lsm_erainterim_roms.nc
 sosie_dir         = /opt/esm-soft/sosie/bin/
 
 [JMM-meolkerg]

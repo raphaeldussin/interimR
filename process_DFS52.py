@@ -46,13 +46,15 @@ for year in np.arange(fyear,lyear+1):
 	             'file_v10':    dict_ctl['processed_nc_dir'] + 'drowned_v10_ERAinterim_'    + str(year) + suffix, \
 	             'file_radlw':  dict_ctl['processed_nc_dir'] + 'drowned_radlw_ERAinterim_'  + str(year) + '_daily' + suffix, \
 	             'file_radsw':  dict_ctl['processed_nc_dir'] + 'drowned_radsw_ERAinterim_'  + str(year) + '_daily' + suffix, \
-	             'file_precip': dict_ctl['processed_nc_dir'] + 'drowned_precip_ERAinterim_' + str(year) + suffix, \
-	             'file_snow':   dict_ctl['processed_nc_dir'] + 'drowned_snow_ERAinterim_'   + str(year) + suffix, \
+	             'file_precip': dict_ctl['processed_nc_dir'] + 'drowned_precip_ERAinterim_' + str(year) + '_daily' + suffix, \
+	             'file_snow':   dict_ctl['processed_nc_dir'] + 'drowned_snow_ERAinterim_'   + str(year) + '_daily' + suffix, \
 	             'file_msl':    dict_ctl['processed_nc_dir'] + 'drowned_msl_ERAinterim_'    + str(year) + suffix, \
-	             'file_tcc':    dict_ctl['processed_nc_dir'] + 'drowned_tcc_ERAinterim_'    + str(year) + suffix, \
 	             'output_dir':  dict_ctl['dfs52_output_dir']                                          , \
 	             'target_model':dict_ctl['target_model']                                              , \
 	             'year':year, 'ncumul':4, 'nx':512, 'ny':256, 'freq':'3h'}
+
+	if not dict_ctl['target_model'] == 'ROMS':
+		my_inputs['file_tcc'] = dict_ctl['processed_nc_dir'] + 'drowned_tcc_ERAinterim_'    + str(year) + suffix
 
 	go = DFS52_processing(my_inputs,dict_datafiles)
 	go()
