@@ -451,7 +451,7 @@ class DFS52_processing():
 		correction_north = np.zeros((self.ny,self.nx))
 
                	fid_off = ioncdf.opennc(self.t2_poles_offset)
-		monthly_offset_poles = ioncdf.readnc(fid_off,self.name_t2)
+		monthly_offset_poles = ioncdf.readnc(fid_off,'Tair')
 		ioncdf.closenc(fid_off)
 		fid_ifra = ioncdf.opennc(self.ice_nsidc)
 		monthly_ice_fraction = ioncdf.readnc(fid_ifra,'ifrac')
