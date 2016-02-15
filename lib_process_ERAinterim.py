@@ -311,7 +311,9 @@ class ERAinterim_processing():
                 lat = self._readnc(fid_t2,'lat')
 		# run the computation
 		for kt in np.arange(0,self.nframes):
-			t2_out[kt,:,:] = self._readnc_oneframe(fid_t2,'T2M',kt) - 273.15
+			t2_out[kt,:,:] = self._readnc_oneframe(fid_t2,'T2M',kt)
+			if self.target_model == 'ROMS':
+				t2_out[kt,:,:] = t2_out[kt,:,:] - 273.15
 			this_time = dt.datetime(self.year,1,1,0,0) + dt.timedelta(seconds=int(kt)*86400/self.nframes_per_day)
                         time[kt] = (this_time - self.reftime).days + (this_time - self.reftime).seconds / 86400.
                 # close file
@@ -323,7 +325,7 @@ class ERAinterim_processing():
 	                self._write_ncfile(lon,lat[::-1],time,t2_out[:,::-1,:],my_dict)
 		elif self.target_model == 'NEMO':
 	                my_dict = {'varname':'t2','time_dim':'time','time_var':'time','long name':'Air Temperature at 2m',\
-	                'units':'degC','fileout':self.output_dir + 't2_' + self.dataset + '_' + str(self.year) + '.nc'}
+	                'units':'K','fileout':self.output_dir + 't2_' + self.dataset + '_' + str(self.year) + '.nc'}
 	                self._write_ncfile(lon,lat,time,t2_out,my_dict)
 		t2_out = None
                 return None

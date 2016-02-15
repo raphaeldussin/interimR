@@ -485,7 +485,7 @@ class DFS52_processing():
 	                'units':'degC','fileout':self.output_dir + 't2_' + self.dataset + '_' + str(self.year) + '_ROMS.nc'}
 		elif self.target_model == 'NEMO':
 	                my_dict = {'varname':'t2','time_dim':'time','time_var':'time','long name':'Air Temperature at 2m',\
-	                'units':'degC','fileout':self.output_dir + 't2_' + self.dataset + '_' + str(self.year) + '.nc'}
+	                'units':'K','fileout':self.output_dir + 't2_' + self.dataset + '_' + str(self.year) + '.nc'}
 		my_dict['description'] = 'DFS 5.2 (MEOM/LGGE) contact : raphael.dussin@gmail.com'
 		my_dict['spval']          = self.spval
 		my_dict['reftime']        = self.reftime
@@ -523,8 +523,13 @@ class DFS52_processing():
 		# run the computation
 		for kt in np.arange(0,self.nframes):
 			# read all the fields
-			t2_old[:,:]    = ioncdf.readnc_oneframe(fid_t2old,self.name_t2,kt)
-			t2_new[:,:]    = ioncdf.readnc_oneframe(fid_t2new,self.name_t2,kt)
+			# ROMS has t2 in degC, others in Kelvin - qsat_from_t2_and_msl expects Celcius
+			if self.target_model == 'ROMS':
+				t2_old[:,:]    = ioncdf.readnc_oneframe(fid_t2old,self.name_t2,kt)
+				t2_new[:,:]    = ioncdf.readnc_oneframe(fid_t2new,self.name_t2,kt)
+			else:
+				t2_old[:,:]    = ioncdf.readnc_oneframe(fid_t2old,self.name_t2,kt) - 273.15
+				t2_new[:,:]    = ioncdf.readnc_oneframe(fid_t2new,self.name_t2,kt) - 273.15
 			msl[:,:]       = ioncdf.readnc_oneframe(fid_msl,self.name_msl,kt)
 			q2_tmp[:,:]    = ioncdf.readnc_oneframe(fid_q2,self.name_q2,kt)
 			# compute humidity at saturation
