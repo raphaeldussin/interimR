@@ -11,6 +11,9 @@ def read(fname):
 humidity = Extension(name = 'interimR.humidity_toolbox',
                 sources = ['interimR/f90/humidity_toolbox.f90'])
 
+drown    = Extension(name = 'interimR.mod_drown',
+                sources = ['interimR/f90/mod_drown.f90'])
+
 setup(
     name = "interimR",
     version = "2.0",
@@ -21,8 +24,9 @@ setup(
     keywords = "ocean forcing",
     url = "",
     packages=['interimR'],
-    ext_modules = [humidity],
-    scripts = ['interimR/scripts/process_ERAinterim']
+    ext_modules = [humidity,drown],
+    scripts = ['interimR/scripts/interimR-process-ERAinterim',
+               'interimR/scripts/interimR-get-ERAinterim']
 )
 #    long_description=read('README'),
 #    classifiers=[

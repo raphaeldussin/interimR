@@ -35,7 +35,8 @@ def create_ncfile(lon_array,lat_array,time,dict_wrt):
         latitudes  = fid.createVariable('lat', 'f8', ('lat',))
         longitudes = fid.createVariable('lon', 'f8', ('lon',))
         times      = fid.createVariable(dict_wrt['time_var'], 'f8', (dict_wrt['time_dim'],))
-        variable   = fid.createVariable(dict_wrt['varname'], 'f4', (dict_wrt['time_dim'],'lat','lon',),fill_value=dict_wrt['spval'])
+        variable   = fid.createVariable(dict_wrt['varname'], 'f4', (dict_wrt['time_dim'],'lat','lon',), \
+	                                fill_value=dict_wrt['spval'])
         # data
         latitudes[:]    = lat_array
         longitudes[:]   = lon_array
@@ -79,7 +80,8 @@ def write_ncfile(lon_array,lat_array,time,var,dict_wrt):
 	latitudes  = fid.createVariable('lat', 'f8', ('lat',))
 	longitudes = fid.createVariable('lon', 'f8', ('lon',))
 	times      = fid.createVariable(dict_wrt['time_var'], 'f8', (dict_wrt['time_dim'],))
-	variable   = fid.createVariable(dict_wrt['varname'], 'f4', (dict_wrt['time_dim'],'lat','lon',),fill_value=dict_wrt['spval'])
+	variable   = fid.createVariable(dict_wrt['varname'], 'f4', (dict_wrt['time_dim'],'lat','lon',),\
+	                                fill_value=dict_wrt['spval'])
 
 	# attributes
 	longitudes.units = "degrees_east"

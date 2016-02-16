@@ -30,3 +30,15 @@ processed_nc_dir  =
 dfs52_output_dir  = 
 lsm_file          =
 sosie_dir         =
+
+[RD-laptop]
+first_year        = 2015
+last_year         = 2015
+target_model      = ROMS
+original_grib_dir = /Users/raphael/STORAGE/forcing_set/era_grib
+original_nc_dir   = /Users/raphael/STORAGE/forcing_set/era_nc
+processed_nc_dir  = /Users/raphael/STORAGE/forcing_set/era_nc_processed
+dfs52_output_dir  = /Users/raphael/STORAGE/forcing_set/dfs_nc
+lsm_file          = ./data/masks/lsm_erainterim_roms.nc
+sosie_dir         = /opt/esm-soft/sosie/bin/
+

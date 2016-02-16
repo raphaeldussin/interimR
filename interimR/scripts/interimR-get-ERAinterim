@@ -12,8 +12,14 @@
 # available from https://api.ecmwf.int/v1/key/
 #
 # R.Dussin 2014 - adapt script to download ERAinterim
-
-from ecmwfapi import ECMWFDataServer
+try:
+	from ecmwfapi import ECMWFDataServer
+except:
+	print 'ECMWF package not found, please visit '
+	print 'https://software.ecmwf.int/wiki/display/WEBAPI/Accessing+ECMWF+data+servers+in+batch'
+	print 'you need to register, install the package '
+	print 'sudo pip install https://software.ecmwf.int/wiki/download/attachments/47287906/ecmwf-api-client-python.tgz'
+	print 'then create $HOME/.ecmwfapirc and copy registration key in it'
 import numpy as np
 import ConfigParser
 import os 
@@ -25,8 +31,9 @@ except:
         print 'You must provide a user options entry for this script' ; exit()
 
 # open the parser and read the info on the run
+homedir = os.path.expanduser('~')
 config = ConfigParser.ConfigParser()
-config.read('./user.opts')
+config.read(homedir + '/.interimR/user.opts')
 
 dict_ctl = {}
 
@@ -34,8 +41,11 @@ for item in config.options(this_user):
         dict_ctl[item] = config.get(this_user,item)
 
 # Define the list of interesting variables with their associated parameter on MARS server
-ecmwf_param = {'u10' : '165.128', 'v10' : '166.128', 'd2' : '168.128' , 't2' : '167.128' , \
-                'msl' : '151.128', 'snow' : '144.128' , 'radsw' : '169.128' , 'radlw' : '175.128' , 'precip' : '228.128' , 'tcc' : '164.128'}
+#ecmwf_param = {'u10' : '165.128', 'v10' : '166.128', 'd2' : '168.128' , 't2' : '167.128' , \
+#                'msl' : '151.128', 'snow' : '144.128' , 'radsw' : '169.128' , 'radlw' : '175.128' , \
+#                'precip' : '228.128' , 'tcc' : '164.128'}
+
+ecmwf_param = {'t2' : '167.128' }
 
 # Choose years to download
 fyear = int(dict_ctl['first_year'])
