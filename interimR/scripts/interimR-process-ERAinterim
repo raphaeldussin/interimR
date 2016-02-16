@@ -11,7 +11,7 @@ try:
 except:
 	print 'You must provide a user options entry for this script' ; exit()
 
-# open the parser and read the info on the run
+# open the parser and read the info on the job
 homedir = os.path.expanduser('~')
 config = ConfigParser.ConfigParser()
 config.read(homedir + '/.interimR/user.opts')
@@ -21,10 +21,17 @@ dict_ctl = {}
 for item in config.options(this_user):
 	dict_ctl[item] = config.get(this_user,item)
 
-fyear = int(dict_ctl['first_year'])
-lyear = int(dict_ctl['last_year'])
+# get variables names for specified model
+varnames = ConfigParser.ConfigParser()
+varnames.read(homedir + '/.interimR/model.variables')
+
+for item in varnames.options(dict_ctl['target_model']):
+	dict_ctl[item] = varnames.get(dict_ctl['target_model'],item)
 
 #--------------------------------------------------------------------------------------------------
+
+fyear = int(dict_ctl['first_year'])
+lyear = int(dict_ctl['last_year'])
 
 for year in np.arange(fyear,lyear+1):
 
@@ -38,8 +45,6 @@ for year in np.arange(fyear,lyear+1):
 #	             'file_snow':   dict_ctl['original_nc_dir'] + 'snow_ERAinterim_'   + str(year) + '.nc', \
 #	             'file_msl':    dict_ctl['original_nc_dir'] + 'msl_ERAinterim_'    + str(year) + '.nc', \
 #	             'file_tcc':    dict_ctl['original_nc_dir'] + 'tcc_ERAinterim_'    + str(year) + '.nc', \
-	             'output_dir':  dict_ctl['processed_nc_dir']                                          , \
-	             'target_model':dict_ctl['target_model']                                              , \
 	             'year':year, 'ncumul':4, 'nx':512, 'ny':256, 'freq':'3h'}
 
 	dict_ctl.update(my_inputs)

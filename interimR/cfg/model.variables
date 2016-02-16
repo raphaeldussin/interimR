@@ -1,0 +1,44 @@
+[ROMS]
+name_t2          = Tair
+name_time_t2     = tair_time
+name_q2          = Qair         
+name_time_q2     = qair_time
+name_u10         = Uwind        
+name_time_u10    = wind_time
+name_v10         = Vwind        
+name_time_v10    = wind_time
+name_radsw       = swrad        
+name_time_radsw  = srf_time
+name_radlw       = lwrad_down   
+name_time_radlw  = lrf_time
+name_precip      = rain         
+name_time_precip = rain_time
+name_snow        = rain         
+name_time_snow   = rain_time
+name_msl         = Pair         
+name_time_msl    = pair_time
+name_tcc         = Cloud         
+name_time_tcc    = cloud_time
+
+[NEMO]
+name_t2          = t2
+name_time_t2     = time
+name_q2          = q2         
+name_time_q2     = time
+name_u10         = u10        
+name_time_u10    = time
+name_v10         = v10        
+name_time_v10    = time
+name_radsw       = radsw        
+name_time_radsw  = time
+name_radlw       = radlw   
+name_time_radlw  = time
+name_precip      = precip         
+name_time_precip = time
+name_snow        = snow         
+name_time_snow   = time
+name_msl         = msl         
+name_time_msl    = time
+name_tcc         = tcc         
+name_time_tcc    = time
+

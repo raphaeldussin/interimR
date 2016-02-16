@@ -104,11 +104,11 @@ class ERAinterim_processing():
 		# write file
 		if self.target_model == 'ROMS':
 			my_dict = {'varname':'rain','time_dim':'rain_time','time_var':'rain_time','long name':'Total Precipitation',\
-			'units':'kg.m-2.s-1','fileout':self.output_dir + 'precip_' + self.dataset + '_' + str(self.year) + '_ROMS.nc'}
+			'units':'kg.m-2.s-1','fileout':self.processed_nc_dir + 'precip_' + self.dataset + '_' + str(self.year) + '_ROMS.nc'}
 			ioncdf.write_ncfile(lon,lat[::-1],time,precip_out[:,::-1,:],my_dict)
 		elif self.target_model == 'NEMO':
 			my_dict = {'varname':'precip','time_dim':'time','time_var':'time','long name':'Total Precipitation',\
-			'units':'kg.m-2.s-1','fileout':self.output_dir + 'precip_' + self.dataset + '_' + str(self.year) + '.nc'}
+			'units':'kg.m-2.s-1','fileout':self.processed_nc_dir + 'precip_' + self.dataset + '_' + str(self.year) + '.nc'}
 			ioncdf.write_ncfile(lon,lat,time,precip_out,my_dict)
 		precip_out = None
 		return None
@@ -146,11 +146,11 @@ class ERAinterim_processing():
 		# write file
 		if self.target_model == 'ROMS':
 			my_dict = {'varname':'rain','time_dim':'rain_time','time_var':'rain_time','long name':'Total Precipitation',\
-			'units':'kg.m-2.s-1','fileout':self.output_dir + 'precip_' + self.dataset + '_' + str(self.year) + '_daily_ROMS.nc'}
+			'units':'kg.m-2.s-1','fileout':self.processed_nc_dir + 'precip_' + self.dataset + '_' + str(self.year) + '_daily_ROMS.nc'}
 			ioncdf.write_ncfile(lon,lat[::-1],time,precip_out[:,::-1,:],my_dict)
 		elif self.target_model == 'NEMO':
 			my_dict = {'varname':'precip','time_dim':'time','time_var':'time','long name':'Total Precipitation',\
-			'units':'kg.m-2.s-1','fileout':self.output_dir + 'precip_' + self.dataset + '_' + str(self.year) + '_daily.nc'}
+			'units':'kg.m-2.s-1','fileout':self.processed_nc_dir + 'precip_' + self.dataset + '_' + str(self.year) + '_daily.nc'}
 			ioncdf.write_ncfile(lon,lat,time,precip_out,my_dict)
 		precip_out = None
 		return None
@@ -187,11 +187,11 @@ class ERAinterim_processing():
                 # write file
 		if self.target_model == 'ROMS':
                 	my_dict = {'varname':'rain','time_dim':'rain_time','time_var':'rain_time','long name':'Snow Fall',\
- 	               'units':'kg.m-2.s-1','fileout':self.output_dir + 'snow_' + self.dataset + '_' + str(self.year) + '_daily_ROMS.nc'}
+ 	               'units':'kg.m-2.s-1','fileout':self.processed_nc_dir + 'snow_' + self.dataset + '_' + str(self.year) + '_daily_ROMS.nc'}
 			ioncdf.write_ncfile(lon,lat[::-1],time,snow_out[:,::-1,:],my_dict)
 		elif self.target_model == 'NEMO':
                 	my_dict = {'varname':'snow','time_dim':'time','time_var':'time','long name':'Snow Fall',\
- 	               'units':'kg.m-2.s-1','fileout':self.output_dir + 'snow_' + self.dataset + '_' + str(self.year) + '_daily.nc'}
+ 	               'units':'kg.m-2.s-1','fileout':self.processed_nc_dir + 'snow_' + self.dataset + '_' + str(self.year) + '_daily.nc'}
 			ioncdf.write_ncfile(lon,lat,time,snow_out,my_dict)
 		snow_out = None
                 return None
@@ -226,11 +226,11 @@ class ERAinterim_processing():
                 # write file
 		if self.target_model == 'ROMS':
 	                my_dict = {'varname':'lwrad_down','time_dim':'lrf_time','time_var':'lrf_time','long name':'Downwelling longwave radiation',\
-	                'units':'W.m-2','fileout':self.output_dir + 'radlw_' + self.dataset + '_' + str(self.year) + '_daily_ROMS.nc'}
+	                'units':'W.m-2','fileout':self.processed_nc_dir + 'radlw_' + self.dataset + '_' + str(self.year) + '_daily_ROMS.nc'}
        		        ioncdf.write_ncfile(lon,lat[::-1],time,radlw_out[:,::-1,:],my_dict)
 		elif self.target_model == 'NEMO':
 	                my_dict = {'varname':'radlw','time_dim':'time','time_var':'time','long name':'Downwelling longwave radiation',\
-	                'units':'W.m-2','fileout':self.output_dir + 'radlw_' + self.dataset + '_' + str(self.year) + '_daily.nc'}
+	                'units':'W.m-2','fileout':self.processed_nc_dir + 'radlw_' + self.dataset + '_' + str(self.year) + '_daily.nc'}
        		        ioncdf.write_ncfile(lon,lat,time,radlw_out,my_dict)
 		radlw_out = None
                 return None
@@ -265,11 +265,11 @@ class ERAinterim_processing():
                 # write file
 		if self.target_model == 'ROMS':
 	                my_dict = {'varname':'swrad','time_dim':'srf_time','time_var':'srf_time','long name':'Shortwave radiation',\
-	                'units':'W.m-2','fileout':self.output_dir + 'radsw_' + self.dataset + '_' + str(self.year) + '_daily_ROMS.nc'}
+	                'units':'W.m-2','fileout':self.processed_nc_dir + 'radsw_' + self.dataset + '_' + str(self.year) + '_daily_ROMS.nc'}
 	                ioncdf.write_ncfile(lon,lat[::-1],time,radsw_out[:,::-1,:],my_dict)
 		elif self.target_model == 'NEMO':
 	                my_dict = {'varname':'radsw','time_dim':'time','time_var':'time','long name':'Shortwave radiation',\
-	                'units':'W.m-2','fileout':self.output_dir + 'radsw_' + self.dataset + '_' + str(self.year) + '_daily.nc'}
+	                'units':'W.m-2','fileout':self.processed_nc_dir + 'radsw_' + self.dataset + '_' + str(self.year) + '_daily.nc'}
 	                ioncdf.write_ncfile(lon,lat,time,radsw_out,my_dict)
 		radsw_out = None
                 return None
@@ -298,11 +298,11 @@ class ERAinterim_processing():
                 # write file
 		if self.target_model == 'ROMS':
 	                my_dict = {'varname':'Qair','time_dim':'qair_time','time_var':'qair_time','long name':'Specific humidity at 2m',\
-	                'units':'kg/kg','fileout':self.output_dir + 'q2_' + self.dataset + '_' + str(self.year) + '_ROMS.nc'}
+	                'units':'kg/kg','fileout':self.processed_nc_dir + 'q2_' + self.dataset + '_' + str(self.year) + '_ROMS.nc'}
 	                ioncdf.write_ncfile(lon,lat[::-1],time,q2_out[:,::-1,:],my_dict)
 		elif self.target_model == 'NEMO':
 	                my_dict = {'varname':'q2','time_dim':'time','time_var':'time','long name':'Specific humidity at 2m',\
-	                'units':'kg/kg','fileout':self.output_dir + 'q2_' + self.dataset + '_' + str(self.year) + '.nc'}
+	                'units':'kg/kg','fileout':self.processed_nc_dir + 'q2_' + self.dataset + '_' + str(self.year) + '.nc'}
 	                ioncdf.write_ncfile(lon,lat,time,q2_out,my_dict)
 		q2_out = None
                 return None
@@ -310,7 +310,7 @@ class ERAinterim_processing():
 	def process_t2_file(self):
 		''' Rewrite temperature file according to model's needs '''
 		t2_out = np.empty((self.nframes,self.ny,self.nx))
-		t2_tmp = np.empty((self.nx,self.ny))
+		t2_drown = np.empty((self.nx,self.ny))
                 time = np.empty((self.nframes))
                 # open file
                 fid_t2 = ioncdf.opennc(self.file_t2)
@@ -325,9 +325,8 @@ class ERAinterim_processing():
 			if self.target_model == 'ROMS':
 				t2_out[kt,:,:] = t2_out[kt,::-1,:] - 273.15
 			if self.drown:
-				print 'drown called at kt =', kt
-				t2_tmp[:,:] = drwn.drown(0,t2_out[kt,:,:].transpose(),self.lsm.transpose(),200,40)
-				t2_out[kt,:,:] = t2_tmp.transpose()
+				t2_drown[:,:] = drwn.drown(0,t2_out[kt,:,:].transpose(),self.lsm.transpose(),200,40)
+				t2_out[kt,:,:] = t2_drown.transpose()
 			this_time = dt.datetime(self.year,1,1,0,0) + dt.timedelta(seconds=int(kt)*86400/self.nframes_per_day)
                         time[kt] = (this_time - self.reftime).days + (this_time - self.reftime).seconds / 86400.
                 # close file
@@ -335,6 +334,9 @@ class ERAinterim_processing():
                 # write file
 		my_dict = {}
 		my_dict['description']    = 'file processed by interimR. contact : raphael.dussin@gmail.com'
+		my_dict['varname']        = self.name_t2
+		my_dict['time_dim']       = self.name_time_t2
+		my_dict['time_var']       = self.name_time_t2
                 my_dict['long name']      = 'Air Temperature at 2m'
                 my_dict['spval']          = self.spval
                 my_dict['reftime']        = self.reftime
@@ -342,15 +344,14 @@ class ERAinterim_processing():
                 my_dict['time_valid_max'] = time.max()
                 my_dict['var_valid_min']  = t2_out.min()
                 my_dict['var_valid_max']  = t2_out.max()
+		my_dict['fileout']        = self.processed_nc_dir + \
+		                            self.name_t2 + '_' + self.dataset + '_' + str(self.year) + '.nc'
 		if self.target_model == 'ROMS':
-	                model_dependent = {'varname':'Tair','time_dim':'tair_time','time_var':'tair_time',\
-	                'units':'degC','fileout':self.output_dir + 't2_' + self.dataset + '_' + str(self.year) + '_ROMS.nc'}
-			my_dict.update(model_dependent)
-	                #ioncdf.write_ncfile(lon,lat[::-1],time,t2_out[:,::-1,:],my_dict)
+	                model_dependent = {'units':'degC','description':'ROMS-ready ERAinterim forcing'}
 		elif self.target_model == 'NEMO':
-	                model_dependent = {'varname':'t2','time_dim':'time','time_var':'time',\
-	                'units':'K','fileout':self.output_dir + 't2_' + self.dataset + '_' + str(self.year) + '.nc'}
-			my_dict.update(model_dependent)
+	                model_dependent = {'units':'K','description':'NEMO-ready ERAinterim forcing'}
+
+		my_dict.update(model_dependent)
                 ioncdf.write_ncfile(lon,lat,time,t2_out,my_dict)
 		t2_out = None
                 return None
@@ -374,11 +375,11 @@ class ERAinterim_processing():
                 # write file
 		if self.target_model == 'ROMS':
 	                my_dict = {'varname':'Pair','time_dim':'pair_time','time_var':'pair_time','long name':'Mean sea-level pressure',\
-	                'units':'Pa','fileout':self.output_dir + 'msl_' + self.dataset + '_' + str(self.year) + '_ROMS.nc'}
+	                'units':'Pa','fileout':self.processed_nc_dir + 'msl_' + self.dataset + '_' + str(self.year) + '_ROMS.nc'}
 	                ioncdf.write_ncfile(lon,lat[::-1],time,msl_out[:,::-1,:],my_dict)
 		elif self.target_model == 'NEMO':
 	                my_dict = {'varname':'msl','time_dim':'time','time_var':'time','long name':'Mean sea-level pressure',\
-	                'units':'Pa','fileout':self.output_dir + 'msl_' + self.dataset + '_' + str(self.year) + '.nc'}
+	                'units':'Pa','fileout':self.processed_nc_dir + 'msl_' + self.dataset + '_' + str(self.year) + '.nc'}
 	                ioncdf.write_ncfile(lon,lat,time,msl_out,my_dict)
 		msl_out = None
 		return None
@@ -402,11 +403,11 @@ class ERAinterim_processing():
                 # write file
 		if self.target_model == 'ROMS':
 	                my_dict = {'varname':'cloud','time_dim':'cloud_time','time_var':'cloud_time','long name':'Total cloud cover',\
-	                'units':'N/A','fileout':self.output_dir + 'tcc_' + self.dataset + '_' + str(self.year) + '_ROMS.nc'}
+	                'units':'N/A','fileout':self.processed_nc_dir + 'tcc_' + self.dataset + '_' + str(self.year) + '_ROMS.nc'}
 	                ioncdf.write_ncfile(lon,lat[::-1],time,tcc_out[:,::-1,:],my_dict)
 		elif self.target_model == 'NEMO':
 	                my_dict = {'varname':'tcc','time_dim':'time','time_var':'time','long name':'Total cloud cover',\
-	                'units':'N/A','fileout':self.output_dir + 'tcc_' + self.dataset + '_' + str(self.year) + '.nc'}
+	                'units':'N/A','fileout':self.processed_nc_dir + 'tcc_' + self.dataset + '_' + str(self.year) + '.nc'}
 	                ioncdf.write_ncfile(lon,lat,time,tcc_out,my_dict)
 		tcc_out = None
 		return None
@@ -430,11 +431,11 @@ class ERAinterim_processing():
                 # write file
 		if self.target_model == 'ROMS':
 	                my_dict = {'varname':'Uwind','time_dim':'wind_time','time_var':'wind_time','long name':'Zonal wind speed at 10m',\
-	                'units':'m/s','fileout':self.output_dir + 'u10_' + self.dataset + '_' + str(self.year) + '_ROMS.nc'}
+	                'units':'m/s','fileout':self.processed_nc_dir + 'u10_' + self.dataset + '_' + str(self.year) + '_ROMS.nc'}
 	                ioncdf.write_ncfile(lon,lat[::-1],time,u10_out[:,::-1,:],my_dict)
 		elif self.target_model == 'NEMO':
 	                my_dict = {'varname':'u10','time_dim':'time','time_var':'time','long name':'Zonal wind speed at 10m',\
-	                'units':'m/s','fileout':self.output_dir + 'u10_' + self.dataset + '_' + str(self.year) + '.nc'}
+	                'units':'m/s','fileout':self.processed_nc_dir + 'u10_' + self.dataset + '_' + str(self.year) + '.nc'}
 	                ioncdf.write_ncfile(lon,lat,time,u10_out,my_dict)
 		u10_out = None
 		return None
@@ -458,11 +459,11 @@ class ERAinterim_processing():
                 # write file
 		if self.target_model == 'ROMS':
 	                my_dict = {'varname':'Vwind','time_dim':'wind_time','time_var':'wind_time','long name':'Meridional wind speed at 10m',\
-	                'units':'m/s','fileout':self.output_dir + 'v10_' + self.dataset + '_' + str(self.year) + '_ROMS.nc'}
+	                'units':'m/s','fileout':self.processed_nc_dir + 'v10_' + self.dataset + '_' + str(self.year) + '_ROMS.nc'}
 	                ioncdf.write_ncfile(lon,lat[::-1],time,v10_out[:,::-1,:],my_dict)
 		elif self.target_model == 'NEMO':
 	                my_dict = {'varname':'v10','time_dim':'time','time_var':'time','long name':'Meridional wind speed at 10m',\
-	                'units':'m/s','fileout':self.output_dir + 'v10_' + self.dataset + '_' + str(self.year) + '.nc'}
+	                'units':'m/s','fileout':self.processed_nc_dir + 'v10_' + self.dataset + '_' + str(self.year) + '.nc'}
 	                ioncdf.write_ncfile(lon,lat,time,v10_out,my_dict)
 		v10_out = None
 		return None
@@ -475,74 +476,4 @@ class ERAinterim_processing():
 		for kt in np.arange(1,nchunk):
 			data_out[kt,:,:] = data[kt,:,:] - data[kt-1,:,:]
 		return data_out
-
-#	#------------------ NetCDF functions ------------------------------------------
-#	def _opennc(self,myfile):
-#		fid = nc.Dataset(myfile,'r')
-#		return fid
-#
-#	def _closenc(self,fid):
-#		fid.close()
-#		return None
-#
-#        def _readnc_frames(self,fid,myvar,myframe_start,myframe_end):
-#                ''' read data from netcdf '''
-#                out = fid.variables[myvar][myframe_start:myframe_end,:,:].squeeze()
-#                return out
-#
-#        def _readnc_oneframe(self,fid,myvar,myframe):
-#                ''' read data from netcdf '''
-#                out = fid.variables[myvar][myframe,:,:].squeeze()
-#                return out
-#
-#        def _readnc(self,fid,myvar):
-#                ''' read data from netcdf '''
-#                out = fid.variables[myvar][:].squeeze()
-#                return out
-#
-#	def _write_ncfile(self,lon_array,lat_array,time,var,dict_wrt):
-#        	fid = nc.Dataset(dict_wrt['fileout'], 'w', format='NETCDF3_CLASSIC')
-#	        fid.description = 'ERAinterim post-processing (raphael.dussin@gmail.com)'
-#	        # dimensions
-#	        fid.createDimension('lat', lat_array.shape[0])
-#	        fid.createDimension('lon', lon_array.shape[0])
-#	        fid.createDimension(dict_wrt['time_dim'], None)
-#	        # variables
-#	        latitudes  = fid.createVariable('lat', 'f8', ('lat',))
-#	        longitudes = fid.createVariable('lon', 'f8', ('lon',))
-#	        times      = fid.createVariable(dict_wrt['time_var'], 'f8', (dict_wrt['time_dim'],))
-#	        variable   = fid.createVariable(dict_wrt['varname'], 'f4', (dict_wrt['time_dim'],'lat','lon',),fill_value=self.spval)
-#	
-#		# attributes
-#		longitudes.units = "degrees_east" 
-#		longitudes.valid_min = lon_array.min()
-#		longitudes.valid_max = lon_array.max()
-#		longitudes.long_name = "longitude" 
-#
-#		latitudes.units = "degrees_north" 
-#		latitudes.valid_min = lat_array.min()
-#		latitudes.valid_max = lat_array.max()
-#		latitudes.long_name = "latitude" 
-#
-#		times.units = "days since " + self.reftime.isoformat()
-#		times.valid_min = time.min()
-#                times.valid_max = time.max()
-#                times.calendar = "LEAP"
-#
-#		variable.long_name = dict_wrt['long name']
-#		variable.units = dict_wrt['units']
-#		variable.coordinates = "lon lat" 
-#		variable.time = dict_wrt['time_var']
-#		variable.missing_value = self.spval
-#		variable.valid_range = var.min() , var.max()
-#
-#	        # data
-#	        latitudes[:]    = lat_array
-#	        longitudes[:]   = lon_array
-#	        times[:]        = time
-#	        variable[:,:,:] = var
-#
-#	        # close
-#	        fid.close()
-#	        return None
 
