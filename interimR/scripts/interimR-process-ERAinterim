@@ -28,6 +28,13 @@ varnames.read(homedir + '/.interimR/model.variables')
 for item in varnames.options(dict_ctl['target_model']):
 	dict_ctl[item] = varnames.get(dict_ctl['target_model'],item)
 
+if dict_ctl['drown_files'] == 'True':
+	drown_fields = True
+elif dict_ctl['drown_files'] == 'False':
+	drown_fields = False
+else:
+	exit('Unrecognized value for drown_files, must be either True or False')
+
 #--------------------------------------------------------------------------------------------------
 
 fyear = int(dict_ctl['first_year'])
@@ -48,5 +55,5 @@ for year in np.arange(fyear,lyear+1):
 	             'year':year, 'ncumul':4, 'nx':512, 'ny':256, 'freq':'3h'}
 
 	dict_ctl.update(my_inputs)
-	go = ERAinterim_processing(dict_ctl)
+	go = ERAinterim_processing(dict_ctl,drown=drown_fields)
 	go()
