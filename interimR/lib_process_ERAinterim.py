@@ -332,8 +332,7 @@ class ERAinterim_processing():
 				q2_out[kt,:,:] = q2_out[kt,::-1,:]
 			if self.drown:
 				q2_out[kt,:,:] = self.drown_wrapper(q2_out[kt,:,:])
-			this_time = dt.datetime(self.year,1,1,0,0) + dt.timedelta(seconds=int(kt)*86400/self.nframes_per_day)
-                        time[kt] = (this_time - self.reftime).days + (this_time - self.reftime).seconds / 86400.
+			time[kt] = self.kt_to_days_from_origin(kt)
                 # close file
                 ioncdf.closenc(fid_d2)
                 ioncdf.closenc(fid_msl)
@@ -380,8 +379,7 @@ class ERAinterim_processing():
 				t2_out[kt,:,:] = t2_out[kt,::-1,:] - 273.15
 			if self.drown:
 				t2_out[kt,:,:] = self.drown_wrapper(t2_out[kt,:,:])
-			this_time = dt.datetime(self.year,1,1,0,0) + dt.timedelta(seconds=int(kt)*86400/self.nframes_per_day)
-                        time[kt] = (this_time - self.reftime).days + (this_time - self.reftime).seconds / 86400.
+			time[kt] = self.kt_to_days_from_origin(kt)
                 # close file
                 ioncdf.closenc(fid_t2)
                 # write file
@@ -426,8 +424,7 @@ class ERAinterim_processing():
 				msl_out[kt,:,:] = msl_out[kt,::-1,:]
 			if self.drown:
 				msl_out[kt,:,:] = self.drown_wrapper(msl_out[kt,:,:])
-			this_time = dt.datetime(self.year,1,1,0,0) + dt.timedelta(seconds=int(kt)*86400/self.nframes_per_day)
-                        time[kt] = (this_time - self.reftime).days + (this_time - self.reftime).seconds / 86400.
+			time[kt] = self.kt_to_days_from_origin(kt)
                 # close file
                 ioncdf.closenc(fid_msl)
                 # write file
@@ -473,8 +470,7 @@ class ERAinterim_processing():
 				tcc_out[kt,:,:] = tcc_out[kt,::-1,:]
 			if self.drown:
 				tcc_out[kt,:,:] = self.drown_wrapper(tcc_out[kt,:,:])
-			this_time = dt.datetime(self.year,1,1,0,0) + dt.timedelta(seconds=int(kt)*86400/self.nframes_per_day)
-                        time[kt] = (this_time - self.reftime).days + (this_time - self.reftime).seconds / 86400.
+			time[kt] = self.kt_to_days_from_origin(kt)
                 # close file
                 ioncdf.closenc(fid_tcc)
                 # write file
@@ -520,8 +516,7 @@ class ERAinterim_processing():
 				u10_out[kt,:,:] = u10_out[kt,::-1,:]
 			if self.drown:
 				u10_out[kt,:,:] = self.drown_wrapper(u10_out[kt,:,:])
-			this_time = dt.datetime(self.year,1,1,0,0) + dt.timedelta(seconds=int(kt)*86400/self.nframes_per_day)
-                        time[kt] = (this_time - self.reftime).days + (this_time - self.reftime).seconds / 86400.
+			time[kt] = self.kt_to_days_from_origin(kt)
                 # close file
                 ioncdf.closenc(fid_u10)
                 # write file
@@ -567,8 +562,7 @@ class ERAinterim_processing():
 				v10_out[kt,:,:] = v10_out[kt,::-1,:]
 			if self.drown:
 				v10_out[kt,:,:] = self.drown_wrapper(v10_out[kt,:,:])
-			this_time = dt.datetime(self.year,1,1,0,0) + dt.timedelta(seconds=int(kt)*86400/self.nframes_per_day)
-                        time[kt] = (this_time - self.reftime).days + (this_time - self.reftime).seconds / 86400.
+			time[kt] = self.kt_to_days_from_origin(kt)
                 # close file
                 ioncdf.closenc(fid_v10)
                 # write file
@@ -604,6 +598,11 @@ class ERAinterim_processing():
 		for kt in np.arange(1,nchunk):
 			data_out[kt,:,:] = data[kt,:,:] - data[kt-1,:,:]
 		return data_out
+
+	def kt_to_days_from_origin(self,kt):
+		this_time = dt.datetime(self.year,1,1,0,0) + dt.timedelta(seconds=int(kt+1)*86400/self.nframes_per_day)
+                out = (this_time - self.reftime).days + (this_time - self.reftime).seconds / 86400.
+		return out
 
 	#------------------ wrapper drown -----------------------------------------------
 
