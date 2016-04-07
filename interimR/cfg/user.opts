@@ -39,6 +39,6 @@ original_grib_dir = /Users/raphael/STORAGE/forcing_set/era_grib
 original_nc_dir   = /Users/raphael/STORAGE/forcing_set/era_nc
 processed_nc_dir  = /Users/raphael/STORAGE/forcing_set/era_nc_processed
 dfs52_output_dir  = /Users/raphael/STORAGE/forcing_set/dfs_nc
-lsm_file          = ./data/masks/lsm_erainterim_roms.nc
+lsm_file          = <SRCDIR>/data/masks/lsm_erainterim_roms.nc
 sosie_dir         = /opt/esm-soft/sosie/bin/
 

@@ -347,10 +347,9 @@ class ERAinterim_processing():
 		my_dict['fileout']        = self.processed_nc_dir + \
 		                            self.name_t2 + '_' + self.dataset + '_' + str(self.year) + '.nc'
 		if self.target_model == 'ROMS':
-	                model_dependent = {'units':'degC','description':'ROMS-ready ERAinterim forcing'}
+	                model_dependent = {'units':'degC','description':my_dict['description'] + '\nROMS-ready ERAinterim forcing'}
 		elif self.target_model == 'NEMO':
-	                model_dependent = {'units':'K','description':'NEMO-ready ERAinterim forcing'}
-
+	                model_dependent = {'units':'K','description':my_dict['description'] + '\nNEMO-ready ERAinterim forcing'}
 		my_dict.update(model_dependent)
                 ioncdf.write_ncfile(lon,lat,time,t2_out,my_dict)
 		t2_out = None
