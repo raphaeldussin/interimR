@@ -56,15 +56,15 @@ lyear = int(dict_ctl['last_year'])
 for year in np.arange(fyear,lyear+1):
 
 	my_inputs = {'file_t2':     dict_ctl['processed_nc_dir'] + drownstring + dict_ctl['name_t2']     + '_ERAinterim_' + str(year) + '.nc', \
-#	             'file_q2':     dict_ctl['processed_nc_dir'] + drownstring + dict_ctl['name_q2']     + '_ERAinterim_' + str(year) + '.nc', \
-#	             'file_u10':    dict_ctl['processed_nc_dir'] + drownstring + dict_ctl['name_u10']    + '_ERAinterim_' + str(year) + '.nc', \
-#	             'file_v10':    dict_ctl['processed_nc_dir'] + drownstring + dict_ctl['name_v10']    + '_ERAinterim_' + str(year) + '.nc', \
-#	             'file_radlw':  dict_ctl['processed_nc_dir'] + drownstring + dict_ctl['name_radlw']  + '_ERAinterim_' + str(year) + '.nc', \
-#	             'file_radsw':  dict_ctl['processed_nc_dir'] + drownstring + dict_ctl['name_radsw']  + '_ERAinterim_' + str(year) + '.nc', \
-#	             'file_precip': dict_ctl['processed_nc_dir'] + drownstring + dict_ctl['name_precip'] + '_ERAinterim_' + str(year) + '.nc', \
-#	             'file_snow':   dict_ctl['processed_nc_dir'] + drownstring + dict_ctl['name_snow']   + '_ERAinterim_' + str(year) + '.nc', \
-#	             'file_msl':    dict_ctl['processed_nc_dir'] + drownstring + dict_ctl['name_msl']    + '_ERAinterim_' + str(year) + '.nc', \
-#		     'file_tcc':    dict_ctl['processed_nc_dir'] + drownstring + dict_ctl['name_tcc']    + '_ERAinterim_' + str(year) + '.nc', \
+	             'file_q2':     dict_ctl['processed_nc_dir'] + drownstring + dict_ctl['name_q2']     + '_ERAinterim_' + str(year) + '.nc', \
+	             'file_u10':    dict_ctl['processed_nc_dir'] + drownstring + dict_ctl['name_u10']    + '_ERAinterim_' + str(year) + '.nc', \
+	             'file_v10':    dict_ctl['processed_nc_dir'] + drownstring + dict_ctl['name_v10']    + '_ERAinterim_' + str(year) + '.nc', \
+	             'file_radlw':  dict_ctl['processed_nc_dir'] + drownstring + dict_ctl['name_radlw']  + '_ERAinterim_' + str(year) + '.nc', \
+	             'file_radsw':  dict_ctl['processed_nc_dir'] + drownstring + dict_ctl['name_radsw']  + '_ERAinterim_' + str(year) + '.nc', \
+	             'file_precip': dict_ctl['processed_nc_dir'] + drownstring + dict_ctl['name_precip'] + '_ERAinterim_' + str(year) + '.nc', \
+	             'file_snow':   dict_ctl['processed_nc_dir'] + drownstring + dict_ctl['name_snow']   + '_ERAinterim_' + str(year) + '.nc', \
+	             'file_msl':    dict_ctl['processed_nc_dir'] + drownstring + dict_ctl['name_msl']    + '_ERAinterim_' + str(year) + '.nc', \
+		     'file_tcc':    dict_ctl['processed_nc_dir'] + drownstring + dict_ctl['name_tcc']    + '_ERAinterim_' + str(year) + '.nc', \
 	             'output_dir':  dict_ctl['dfs52_output_dir']                                          , \
 	             'target_model':dict_ctl['target_model']                                              , \
 	             'year':year, 'ncumul':4, 'nx':512, 'ny':256, 'freq':'3h'}
