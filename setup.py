@@ -26,7 +26,8 @@ setup(
     packages=['interimR'],
     ext_modules = [humidity,drown],
     scripts = ['interimR/scripts/interimR-process-ERAinterim',
-               'interimR/scripts/interimR-get-ERAinterim']
+               'interimR/scripts/interimR-get-ERAinterim',
+               'interimR/scripts/interimR-process-DFS52']
 )
 #    long_description=read('README'),
 #    classifiers=[

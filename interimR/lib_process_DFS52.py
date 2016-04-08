@@ -1,16 +1,15 @@
-import netCDF4 as nc
 import numpy as np
 import calendar
 import datetime as dt
-import humidity_toolbox
 import os 
-import lib_ioncdf as ioncdf
-import matplotlib.pylab as plt
+from interimR import humidity_toolbox
+import interimR.lib_ioncdf as ioncdf
+from interimR.mod_drown import mod_drown as drwn
 
 class DFS52_processing():
 	''' A Class to create the DFS5.2 dataset from ERAinterim '''
 
-	def __init__(self,dict_input,dict_datafiles):
+	def __init__(self,dict_input,dict_datafiles,drown=True):
 		# constants
 		self.rho_w = 1000.
 		self.nsec_per_day = 86400.
@@ -40,32 +39,18 @@ class DFS52_processing():
 		
 		print self.year, 'has', self.nframes, 'frames'
 
-		# variable names
-		if self.target_model == 'ROMS':
-			self.name_t2     = 'Tair'        ; self.name_time_t2     = 'tair_time'
-			self.name_q2     = 'Qair'        ; self.name_time_q2     = 'qair_time'
-			self.name_u10    = 'Uwind'       ; self.name_time_u10    = 'wind_time'
-			self.name_v10    = 'Vwind'       ; self.name_time_v10    = 'wind_time'
-			self.name_radsw  = 'swrad'       ; self.name_time_radsw  = 'srf_time'
-			self.name_radlw  = 'lwrad_down'  ; self.name_time_radlw  = 'lrf_time'
-			self.name_precip = 'rain'        ; self.name_time_precip = 'rain_time'
-			self.name_snow   = 'rain'        ; self.name_time_snow   = 'rain_time'
-			self.name_msl    = 'Pair'        ; self.name_time_msl    = 'pair_time'
+		self.drown = drown
+		if self.drown:
+			self.drownstring = 'drowned_'
 		else:
-			self.name_t2     = 't2'          ; self.name_time_t2     = 'time'
-			self.name_q2     = 'q2'          ; self.name_time_q2     = 'time'
-			self.name_u10    = 'u10'         ; self.name_time_u10    = 'time'
-			self.name_v10    = 'v10'         ; self.name_time_v10    = 'time'
-			self.name_radsw  = 'radsw'       ; self.name_time_radsw  = 'time'
-			self.name_radlw  = 'radlw'       ; self.name_time_radlw  = 'time'
-			self.name_precip = 'precip'      ; self.name_time_precip = 'time'
-			self.name_snow   = 'snow'        ; self.name_time_snow   = 'time'
-			self.name_msl    = 'msl'         ; self.name_time_msl    = 'time'
-			self.name_tcc    = 'tcc'         ; self.name_time_tcc    = 'time'
+			self.drownstring = ''
 
 		fid_lsm = ioncdf.opennc(self.mask)
 		self.lsm = ioncdf.readnc(fid_lsm,'lsm')
 		ioncdf.closenc(fid_lsm)
+
+		print self.name_t2
+		print self.name_time_t2
 		return None
 
 	def __call__(self):
@@ -430,7 +415,7 @@ class DFS52_processing():
 		# make sure that we use latitude from south to north
 		if self.target_model == 'ROMS':
 			lat_s2n = lat
-		else:
+		elif self.target_model == 'NEMO':
 			lat_s2n = lat[::-1]
 
 		value_south = -2.0 # we remove 2 degrees C
@@ -478,21 +463,29 @@ class DFS52_processing():
 				correction_north[:,:] = correction_north[::-1,:]
 			#------ add northern and southern hemisphere correction ------
 			t2_out[kt,:,:] = (t2_tmp[:,:] + correction_north[:,:] + correction_south[:,:]) * self.lsm[:,:]
+			if self.drown:
+				t2_out[kt,:,:] = self.drown_wrapper(t2_out[kt,:,:])
 			
                 # output file informations
-		if self.target_model == 'ROMS':
-	                my_dict = {'varname':'Tair','time_dim':'tair_time','time_var':'tair_time','long name':'Air Temperature at 2m',\
-	                'units':'degC','fileout':self.output_dir + 't2_' + self.dataset + '_' + str(self.year) + '_ROMS.nc'}
-		elif self.target_model == 'NEMO':
-	                my_dict = {'varname':'t2','time_dim':'time','time_var':'time','long name':'Air Temperature at 2m',\
-	                'units':'K','fileout':self.output_dir + 't2_' + self.dataset + '_' + str(self.year) + '.nc'}
+		my_dict = {}
 		my_dict['description'] = 'DFS 5.2 (MEOM/LGGE) contact : raphael.dussin@gmail.com'
+		my_dict['varname']        = self.name_t2
+                my_dict['time_dim']       = self.name_time_t2
+                my_dict['time_var']       = self.name_time_t2
+                my_dict['long name']      = 'Air Temperature at 2m'
 		my_dict['spval']          = self.spval
 		my_dict['reftime']        = self.reftime
 		my_dict['var_valid_min']  = t2_out.min()
 		my_dict['var_valid_max']  = t2_out.max()
 		my_dict['time_valid_min'] = time.min()
 		my_dict['time_valid_max'] = time.max()
+		my_dict['fileout']        = self.processed_nc_dir + \
+                                            self.drownstring + self.name_t2 + '_' + self.dataset + '_' + str(self.year) + '.nc'
+                if self.target_model == 'ROMS':
+                        model_dependent = {'units':'degC','description':my_dict['description'] + '\nROMS-ready ERAinterim forcing'}
+                elif self.target_model == 'NEMO':
+                        model_dependent = {'units':'K','description':my_dict['description'] + '\nNEMO-ready ERAinerim forcing'}
+                my_dict.update(model_dependent)
                 # close input file and write output
                 ioncdf.closenc(fid_t2)
 	        ioncdf.write_ncfile(lon,lat,time,t2_out,my_dict)
@@ -598,3 +591,10 @@ class DFS52_processing():
                 weights[np.mod(nmonth+1,12)] = wgt_2
                 return weights
 
+        #------------------ wrapper drown -----------------------------------------------
+
+        def drown_wrapper(self,data_in):
+                ''' A wrapper for drown to make it cleaner in the main functions '''
+                tmp = drwn.drown(0,data_in[:,:].transpose(),self.lsm.transpose(),200,40)
+                data_out = tmp.transpose()
+                return data_out
