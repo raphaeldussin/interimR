@@ -43,15 +43,15 @@ lyear = int(dict_ctl['last_year'])
 for year in np.arange(fyear,lyear+1):
 
 	my_inputs = {'file_t2':     dict_ctl['original_nc_dir'] + 't2_ERAinterim_'     + str(year) + '.nc', \
-#	             'file_d2':     dict_ctl['original_nc_dir'] + 'd2_ERAinterim_'     + str(year) + '.nc', \
-#	             'file_u10':    dict_ctl['original_nc_dir'] + 'u10_ERAinterim_'    + str(year) + '.nc', \
-#	             'file_v10':    dict_ctl['original_nc_dir'] + 'v10_ERAinterim_'    + str(year) + '.nc', \
-#	             'file_radlw':  dict_ctl['original_nc_dir'] + 'radlw_ERAinterim_'  + str(year) + '.nc', \
-#	             'file_radsw':  dict_ctl['original_nc_dir'] + 'radsw_ERAinterim_'  + str(year) + '.nc', \
-#	             'file_precip': dict_ctl['original_nc_dir'] + 'precip_ERAinterim_' + str(year) + '.nc', \
-#	             'file_snow':   dict_ctl['original_nc_dir'] + 'snow_ERAinterim_'   + str(year) + '.nc', \
-#	             'file_msl':    dict_ctl['original_nc_dir'] + 'msl_ERAinterim_'    + str(year) + '.nc', \
-#	             'file_tcc':    dict_ctl['original_nc_dir'] + 'tcc_ERAinterim_'    + str(year) + '.nc', \
+	             'file_d2':     dict_ctl['original_nc_dir'] + 'd2_ERAinterim_'     + str(year) + '.nc', \
+	             'file_u10':    dict_ctl['original_nc_dir'] + 'u10_ERAinterim_'    + str(year) + '.nc', \
+	             'file_v10':    dict_ctl['original_nc_dir'] + 'v10_ERAinterim_'    + str(year) + '.nc', \
+	             'file_radlw':  dict_ctl['original_nc_dir'] + 'radlw_ERAinterim_'  + str(year) + '.nc', \
+	             'file_radsw':  dict_ctl['original_nc_dir'] + 'radsw_ERAinterim_'  + str(year) + '.nc', \
+	             'file_precip': dict_ctl['original_nc_dir'] + 'precip_ERAinterim_' + str(year) + '.nc', \
+	             'file_snow':   dict_ctl['original_nc_dir'] + 'snow_ERAinterim_'   + str(year) + '.nc', \
+	             'file_msl':    dict_ctl['original_nc_dir'] + 'msl_ERAinterim_'    + str(year) + '.nc', \
+	             'file_tcc':    dict_ctl['original_nc_dir'] + 'tcc_ERAinterim_'    + str(year) + '.nc', \
 	             'year':year, 'ncumul':4, 'nx':512, 'ny':256, 'freq':'3h'}
 
 	dict_ctl.update(my_inputs)
