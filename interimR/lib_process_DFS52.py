@@ -102,20 +102,29 @@ class DFS52_processing():
 		for kt in np.arange(0,self.nframes):
 			tcc_tmp[:,:]    = ioncdf.readnc_oneframe(fid_tcc,self.name_tcc,kt)
 			tcc_out[kt,:,:] = (tcc_tmp[:,:]) * self.lsm[:,:]
+			if self.drown:
+				tcc_out[kt,:,:] = self.drown_wrapper(tcc_out[kt,:,:])
                 # output file informations
-		if self.target_model == 'ROMS':
-                        my_dict = {'varname':'Cloud','time_dim':'cloud_time','time_var':'cloud_time','long name':'Total Cloud Cover',\
-                        'units':'','fileout':self.output_dir + 'tcc_' + self.dataset + '_' + str(self.year) + '_ROMS.nc'}
-                elif self.target_model == 'NEMO':
-                        my_dict = {'varname':'tcc','time_dim':'time','time_var':'time','long name':'Total Cloud Cover',\
-                        'units':'','fileout':self.output_dir + 'tcc_' + self.dataset + '_' + str(self.year) + '.nc'}
+		my_dict = {}
 		my_dict['description'] = 'DFS 5.2 (MEOM/LGGE) contact : raphael.dussin@gmail.com'
+		my_dict['varname']        = self.name_tcc
+		my_dict['time_dim']       = self.name_time_tcc
+		my_dict['time_var']       = self.name_time_tcc
+		my_dict['long name']      = 'Total Cloud Cover'
+		my_dict['units']          = ''
 		my_dict['spval']          = self.spval
 		my_dict['reftime']        = self.reftime
 		my_dict['time_valid_min'] = time.min()
 		my_dict['time_valid_max'] = time.max()
 		my_dict['var_valid_min']  = tcc_out.min()
 		my_dict['var_valid_max']  = tcc_out.max()
+		my_dict['fileout']        = self.processed_nc_dir + \
+                                            self.drownstring + self.name_tcc + '_' + self.dataset + '_' + str(self.year) + '.nc'
+                if self.target_model == 'ROMS':
+                        model_dependent = {'description':my_dict['description'] + '\nROMS-ready ERAinterim forcing'}
+                elif self.target_model == 'NEMO':
+                        model_dependent = {'description':my_dict['description'] + '\nNEMO-ready ERAinerim forcing'}
+                my_dict.update(model_dependent)
                 # close input file and write output
                 ioncdf.closenc(fid_tcc)
 	        ioncdf.write_ncfile(lon,lat,time,tcc_out,my_dict)
@@ -137,20 +146,29 @@ class DFS52_processing():
 		for kt in np.arange(0,self.nframes):
 			msl_tmp[:,:]    = ioncdf.readnc_oneframe(fid_msl,self.name_msl,kt)
 			msl_out[kt,:,:] = (msl_tmp[:,:]) * self.lsm[:,:]
+			if self.drown:
+				msl_out[kt,:,:] = self.drown_wrapper(msl_out[kt,:,:])
                 # output file informations
-		if self.target_model == 'ROMS':
-                        my_dict = {'varname':'Pair','time_dim':'pair_time','time_var':'pair_time','long name':'Mean Sea Level Pressure',\
-                        'units':'Pa','fileout':self.output_dir + 'msl_' + self.dataset + '_' + str(self.year) + '_ROMS.nc'}
-                elif self.target_model == 'NEMO':
-                        my_dict = {'varname':'msl','time_dim':'time','time_var':'time','long name':'Mean Sea Level Pressure',\
-                        'units':'Pa','fileout':self.output_dir + 'msl_' + self.dataset + '_' + str(self.year) + '.nc'}
+		my_dict = {}
 		my_dict['description'] = 'DFS 5.2 (MEOM/LGGE) contact : raphael.dussin@gmail.com'
+		my_dict['varname']        = self.name_msl
+		my_dict['time_dim']       = self.name_time_msl
+		my_dict['time_var']       = self.name_time_msl
+		my_dict['long name']      = 'Mean Sea Level Pressure'
+		my_dict['units']          = 'Pa'
 		my_dict['spval']          = self.spval
 		my_dict['reftime']        = self.reftime
 		my_dict['time_valid_min'] = time.min()
 		my_dict['time_valid_max'] = time.max()
 		my_dict['var_valid_min']  = msl_out.min()
 		my_dict['var_valid_max']  = msl_out.max()
+		my_dict['fileout']        = self.processed_nc_dir + \
+                                            self.drownstring + self.name_msl + '_' + self.dataset + '_' + str(self.year) + '.nc'
+                if self.target_model == 'ROMS':
+                        model_dependent = {'description':my_dict['description'] + '\nROMS-ready ERAinterim forcing'}
+                elif self.target_model == 'NEMO':
+                        model_dependent = {'description':my_dict['description'] + '\nNEMO-ready ERAinerim forcing'}
+                my_dict.update(model_dependent)
                 # close input file and write output
                 ioncdf.closenc(fid_msl)
 	        ioncdf.write_ncfile(lon,lat,time,msl_out,my_dict)
@@ -173,20 +191,29 @@ class DFS52_processing():
 		for kt in np.arange(0,nframes):
 			snow_tmp[:,:]    = ioncdf.readnc_oneframe(fid_snow,self.name_snow,kt)
 			snow_out[kt,:,:] = (snow_tmp[:,:]) * self.lsm[:,:]
+			if self.drown:
+				snow_out[kt,:,:] = self.drown_wrapper(snow_out[kt,:,:])
                 # output file informations
-		if self.target_model == 'ROMS':
-                        my_dict = {'varname':'rain','time_dim':'rain_time','time_var':'rain_time','long name':'Snow Fall',\
-                        'units':'kg.m-2.s-1','fileout':self.output_dir + 'snow_' + self.dataset + '_' + str(self.year) + '_ROMS.nc'}
-                elif self.target_model == 'NEMO':
-                        my_dict = {'varname':'snow','time_dim':'time','time_var':'time','long name':'Snow Fall',\
-                        'units':'kg.m-2.s-1','fileout':self.output_dir + 'snow_' + self.dataset + '_' + str(self.year) + '.nc'}
+		my_dict = {}
 		my_dict['description'] = 'DFS 5.2 (MEOM/LGGE) contact : raphael.dussin@gmail.com'
+		my_dict['varname']        = self.name_snow
+		my_dict['time_dim']       = self.name_time_snow
+		my_dict['time_var']       = self.name_time_snow
+		my_dict['long name']      = 'Snow Fall'
+		my_dict['units']          = 'kg.m-2.s-1'
 		my_dict['spval']          = self.spval
 		my_dict['reftime']        = self.reftime
 		my_dict['time_valid_min'] = time.min()
 		my_dict['time_valid_max'] = time.max()
 		my_dict['var_valid_min']  = snow_out.min()
 		my_dict['var_valid_max']  = snow_out.max()
+		my_dict['fileout']        = self.processed_nc_dir + \
+                                            self.drownstring + self.name_snow + '_' + self.dataset + '_' + str(self.year) + '.nc'
+                if self.target_model == 'ROMS':
+                        model_dependent = {'description':my_dict['description'] + '\nROMS-ready ERAinterim forcing'}
+                elif self.target_model == 'NEMO':
+                        model_dependent = {'description':my_dict['description'] + '\nNEMO-ready ERAinerim forcing'}
+                my_dict.update(model_dependent)
                 # close input file and write output
                 ioncdf.closenc(fid_snow)
 	        ioncdf.write_ncfile(lon,lat,time,snow_out,my_dict)
@@ -209,20 +236,29 @@ class DFS52_processing():
 		for kt in np.arange(0,nframes):
 			precip_tmp[:,:]    = ioncdf.readnc_oneframe(fid_precip,self.name_precip,kt)
 			precip_out[kt,:,:] = (precip_tmp[:,:]) * self.lsm[:,:]
+			if self.drown:
+				precip_out[kt,:,:] = self.drown_wrapper(precip_out[kt,:,:])
                 # output file informations
-		if self.target_model == 'ROMS':
-                        my_dict = {'varname':'rain','time_dim':'rain_time','time_var':'rain_time','long name':'Total Precipitation',\
-                        'units':'kg.m-2.s-1','fileout':self.output_dir + 'precip_' + self.dataset + '_' + str(self.year) + '_ROMS.nc'}
-                elif self.target_model == 'NEMO':
-                        my_dict = {'varname':'precip','time_dim':'time','time_var':'time','long name':'Total Precipitation',\
-                        'units':'kg.m-2.s-1','fileout':self.output_dir + 'precip_' + self.dataset + '_' + str(self.year) + '.nc'}
+		my_dict = {}
 		my_dict['description'] = 'DFS 5.2 (MEOM/LGGE) contact : raphael.dussin@gmail.com'
+		my_dict['varname']        = self.name_precip
+		my_dict['time_dim']       = self.name_time_precip
+		my_dict['time_var']       = self.name_time_precip
+		my_dict['long name']      = 'Total Precipitation'
+		my_dict['units']          = 'kg.m-2.s-1'
 		my_dict['spval']          = self.spval
 		my_dict['reftime']        = self.reftime
 		my_dict['time_valid_min'] = time.min()
 		my_dict['time_valid_max'] = time.max()
 		my_dict['var_valid_min']  = precip_out.min()
 		my_dict['var_valid_max']  = precip_out.max()
+		my_dict['fileout']        = self.processed_nc_dir + \
+                                            self.drownstring + self.name_precip + '_' + self.dataset + '_' + str(self.year) + '.nc'
+                if self.target_model == 'ROMS':
+                        model_dependent = {'description':my_dict['description'] + '\nROMS-ready ERAinterim forcing'}
+                elif self.target_model == 'NEMO':
+                        model_dependent = {'description':my_dict['description'] + '\nNEMO-ready ERAinerim forcing'}
+                my_dict.update(model_dependent)
                 # close input file and write output
                 ioncdf.closenc(fid_precip)
 	        ioncdf.write_ncfile(lon,lat,time,precip_out,my_dict)
@@ -253,20 +289,29 @@ class DFS52_processing():
 		for kt in np.arange(0,nframes):
 			radlw_tmp[:,:]    = ioncdf.readnc_oneframe(fid_radlw,self.name_radlw,kt)
 			radlw_out[kt,:,:] = (radlw_tmp[:,:] * radlw_factor[:,:] * correct_heat_budget) * self.lsm[:,:]
+			if self.drown:
+				radlw_out[kt,:,:] = self.drown_wrapper(radlw_out[kt,:,:])
                 # output file informations
-		if self.target_model == 'ROMS':
-                        my_dict = {'varname':'lwrad_down','time_dim':'lrf_time','time_var':'lrf_time','long name':'Downwelling longwave radiation',\
-                        'units':'W.m-2','fileout':self.output_dir + 'radlw_' + self.dataset + '_' + str(self.year) + '_ROMS.nc'}
-                elif self.target_model == 'NEMO':
-                        my_dict = {'varname':'radlw','time_dim':'time','time_var':'time','long name':'Downwelling longwave radiation',\
-                        'units':'W.m-2','fileout':self.output_dir + 'radlw_' + self.dataset + '_' + str(self.year) + '.nc'}
+		my_dict = {}
 		my_dict['description'] = 'DFS 5.2 (MEOM/LGGE) contact : raphael.dussin@gmail.com'
+		my_dict['varname']        = self.name_radlw
+		my_dict['time_dim']       = self.name_time_radlw
+		my_dict['time_var']       = self.name_time_radlw
+		my_dict['long name']      = 'Downwelling longwave radiation'
+		my_dict['units']          = 'W.m-2'
 		my_dict['spval']          = self.spval
 		my_dict['reftime']        = self.reftime
 		my_dict['time_valid_min'] = time.min()
 		my_dict['time_valid_max'] = time.max()
 		my_dict['var_valid_min']  = radlw_out.min()
 		my_dict['var_valid_max']  = radlw_out.max()
+		my_dict['fileout']        = self.processed_nc_dir + \
+                                            self.drownstring + self.name_radlw + '_' + self.dataset + '_' + str(self.year) + '.nc'
+                if self.target_model == 'ROMS':
+                        model_dependent = {'description':my_dict['description'] + '\nROMS-ready ERAinterim forcing'}
+                elif self.target_model == 'NEMO':
+                        model_dependent = {'description':my_dict['description'] + '\nNEMO-ready ERAinerim forcing'}
+                my_dict.update(model_dependent)
                 # close input file and write output
                 ioncdf.closenc(fid_radlw)
 	        ioncdf.write_ncfile(lon,lat,time,radlw_out,my_dict)
@@ -296,20 +341,29 @@ class DFS52_processing():
 		for kt in np.arange(0,nframes):
 			radsw_tmp[:,:]    = ioncdf.readnc_oneframe(fid_radsw,self.name_radsw,kt)
 			radsw_out[kt,:,:] = (radsw_tmp[:,:] * radsw_factor[:,:]) * self.lsm[:,:]
+			if self.drown:
+				radsw_out[kt,:,:] = self.drown_wrapper(radsw_out[kt,:,:])
                 # output file informations
-		if self.target_model == 'ROMS':
-                        my_dict = {'varname':'swrad','time_dim':'srf_time','time_var':'srf_time','long name':'Shortwave radiation',\
-                        'units':'W.m-2','fileout':self.output_dir + 'radsw_' + self.dataset + '_' + str(self.year) + '_ROMS.nc'}
-                elif self.target_model == 'NEMO':
-                        my_dict = {'varname':'radsw','time_dim':'time','time_var':'time','long name':'Shortwave radiation',\
-                        'units':'W.m-2','fileout':self.output_dir + 'radsw_' + self.dataset + '_' + str(self.year) + '.nc'}
+		my_dict = {}
 		my_dict['description'] = 'DFS 5.2 (MEOM/LGGE) contact : raphael.dussin@gmail.com'
+		my_dict['varname']        = self.name_radsw
+		my_dict['time_dim']       = self.name_time_radsw
+		my_dict['time_var']       = self.name_time_radsw
+		my_dict['long name']      = 'Shortwave radiation'
+		my_dict['units']          = 'W.m-2'
 		my_dict['spval']          = self.spval
 		my_dict['reftime']        = self.reftime
 		my_dict['var_valid_min']  = radsw_out.min()
 		my_dict['var_valid_max']  = radsw_out.max()
 		my_dict['time_valid_min'] = time.min()
 		my_dict['time_valid_max'] = time.max()
+		my_dict['fileout']        = self.processed_nc_dir + \
+                                            self.drownstring + self.name_radsw + '_' + self.dataset + '_' + str(self.year) + '.nc'
+                if self.target_model == 'ROMS':
+                        model_dependent = {'description':my_dict['description'] + '\nROMS-ready ERAinterim forcing'}
+                elif self.target_model == 'NEMO':
+                        model_dependent = {'description':my_dict['description'] + '\nNEMO-ready ERAinerim forcing'}
+                my_dict.update(model_dependent)
                 # close input file and write output
                 ioncdf.closenc(fid_radsw)
 	        ioncdf.write_ncfile(lon,lat,time,radsw_out,my_dict)
@@ -337,20 +391,29 @@ class DFS52_processing():
 		for kt in np.arange(0,self.nframes):
 			u10_tmp[:,:]    = ioncdf.readnc_oneframe(fid_u10,self.name_u10,kt)
 			u10_out[kt,:,:] = (u10_tmp[:,:] + u10_background[:,:]) * self.lsm[:,:]
+			if self.drown:
+				u10_out[kt,:,:] = self.drown_wrapper(u10_out[kt,:,:])
                 # output file informations
-		if self.target_model == 'ROMS':
-	                my_dict = {'varname':'Uwind','time_dim':'wind_time','time_var':'wind_time','long name':'Zonal wind speed at 10m',\
-	                'units':'m/s','fileout':self.output_dir + 'u10_' + self.dataset + '_' + str(self.year) + '_ROMS.nc'}
-		elif self.target_model == 'NEMO':
-	                my_dict = {'varname':'u10','time_dim':'time','time_var':'time','long name':'Zonal wind speed at 10m',\
-	                'units':'m/s','fileout':self.output_dir + 'u10_' + self.dataset + '_' + str(self.year) + '.nc'}
+		my_dict = {}
 		my_dict['description'] = 'DFS 5.2 (MEOM/LGGE) contact : raphael.dussin@gmail.com'
+		my_dict['varname']        = self.name_u10
+		my_dict['time_dim']       = self.name_time_u10
+		my_dict['time_var']       = self.name_time_u10
+		my_dict['long name']      = 'Zonal wind speed at 10m'
+		my_dict['units']          = 'm/s'
 		my_dict['spval']          = self.spval
 		my_dict['reftime']        = self.reftime
 		my_dict['var_valid_min']  = u10_out.min()
 		my_dict['var_valid_max']  = u10_out.max()
 		my_dict['time_valid_min'] = time.min()
 		my_dict['time_valid_max'] = time.max()
+		my_dict['fileout']        = self.processed_nc_dir + \
+                                            self.drownstring + self.name_u10 + '_' + self.dataset + '_' + str(self.year) + '.nc'
+                if self.target_model == 'ROMS':
+                        model_dependent = {'description':my_dict['description'] + '\nROMS-ready ERAinterim forcing'}
+                elif self.target_model == 'NEMO':
+                        model_dependent = {'description':my_dict['description'] + '\nNEMO-ready ERAinerim forcing'}
+                my_dict.update(model_dependent)
                 # close input file and write output
                 ioncdf.closenc(fid_u10)
 	        ioncdf.write_ncfile(lon,lat,time,u10_out,my_dict)
@@ -379,20 +442,29 @@ class DFS52_processing():
 		for kt in np.arange(0,self.nframes):
 			v10_tmp[:,:]    = ioncdf.readnc_oneframe(fid_v10,self.name_v10,kt)
 			v10_out[kt,:,:] = (v10_tmp[:,:] + v10_background[:,:]) * self.lsm[:,:]
+			if self.drown:
+				v10_out[kt,:,:] = self.drown_wrapper(v10_out[kt,:,:])
                 # output file informations
-		if self.target_model == 'ROMS':
-	                my_dict = {'varname':'Vwind','time_dim':'wind_time','time_var':'wind_time','long name':'Meridional wind speed at 10m',\
-	                'units':'m/s','fileout':self.output_dir + 'v10_' + self.dataset + '_' + str(self.year) + '_ROMS.nc'}
-		elif self.target_model == 'NEMO':
-	                my_dict = {'varname':'v10','time_dim':'time','time_var':'time','long name':'Meridional wind speed at 10m',\
-	                'units':'m/s','fileout':self.output_dir + 'v10_' + self.dataset + '_' + str(self.year) + '.nc'}
+		my_dict = {}
 		my_dict['description'] = 'DFS 5.2 (MEOM/LGGE) contact : raphael.dussin@gmail.com'
+		my_dict['varname']        = self.name_v10
+		my_dict['time_dim']       = self.name_time_v10
+		my_dict['time_var']       = self.name_time_v10
+		my_dict['long name']      = 'Meridional wind speed at 10m'
+		my_dict['units']          = 'm/s'
 		my_dict['spval']          = self.spval
 		my_dict['reftime']        = self.reftime
 		my_dict['var_valid_min']  = v10_out.min()
 		my_dict['var_valid_max']  = v10_out.max()
 		my_dict['time_valid_min'] = time.min()
 		my_dict['time_valid_max'] = time.max()
+		my_dict['fileout']        = self.processed_nc_dir + \
+                                            self.drownstring + self.name_v10 + '_' + self.dataset + '_' + str(self.year) + '.nc'
+                if self.target_model == 'ROMS':
+                        model_dependent = {'description':my_dict['description'] + '\nROMS-ready ERAinterim forcing'}
+                elif self.target_model == 'NEMO':
+                        model_dependent = {'description':my_dict['description'] + '\nNEMO-ready ERAinerim forcing'}
+                my_dict.update(model_dependent)
                 # close input file and write output
                 ioncdf.closenc(fid_v10)
 	        ioncdf.write_ncfile(lon,lat,time,v10_out,my_dict)
@@ -530,30 +602,36 @@ class DFS52_processing():
 			q_sat_old = humidity_toolbox.qsat_from_t2_and_msl(t2_old,msl)
 			# compute new specific humidity
 			q2_out[kt,:,:] = (q2_tmp[:,:] * q_sat_new / q_sat_old) * self.lsm[:,:]
+			if self.drown:
+				q2_out[kt,:,:] = self.drown_wrapper(q2_out[kt,:,:])
 
                 # output file informations
-		if self.target_model == 'ROMS':
-                        my_dict = {'varname':'Qair','time_dim':'qair_time','time_var':'qair_time','long name':'Specific Humidity',\
-                        'units':'kg/kg','fileout':self.output_dir + 'q2_' + self.dataset + '_' + str(self.year) + '_ROMS.nc'}
-                elif self.target_model == 'NEMO':
-                        my_dict = {'varname':'q2','time_dim':'time','time_var':'time','long name':'Specific Humidity',\
-                        'units':'kg/kg','fileout':self.output_dir + 'q2_' + self.dataset + '_' + str(self.year) + '.nc'}
+		my_dict = {}
 		my_dict['description'] = 'DFS 5.2 (MEOM/LGGE) contact : raphael.dussin@gmail.com'
+		my_dict['varname']        = self.name_q2
+		my_dict['time_dim']       = self.name_time_q2
+		my_dict['time_var']       = self.name_time_q2
+		my_dict['long name']      = 'Specific Humidity'
+		my_dict['units']          = 'kg/kg'
 		my_dict['spval']          = self.spval
 		my_dict['reftime']        = self.reftime
 		my_dict['time_valid_min'] = time.min()
 		my_dict['time_valid_max'] = time.max()
 		my_dict['var_valid_min']  = q2_out.min()
 		my_dict['var_valid_max']  = q2_out.max()
+		my_dict['fileout']        = self.processed_nc_dir + \
+                                            self.drownstring + self.name_q2 + '_' + self.dataset + '_' + str(self.year) + '.nc'
+                if self.target_model == 'ROMS':
+                        model_dependent = {'description':my_dict['description'] + '\nROMS-ready ERAinterim forcing'}
+                elif self.target_model == 'NEMO':
+                        model_dependent = {'description':my_dict['description'] + '\nNEMO-ready ERAinerim forcing'}
+                my_dict.update(model_dependent)
                 # close input file and write output
                 ioncdf.closenc(fid_q2)
 	        ioncdf.write_ncfile(lon,lat,time,q2_out,my_dict)
 		# clear arrays
 		q2_tmp = None ; q2_out = None
 		return None
-
-
-
 
 	#------------------- Time interpolation ---------------------------------------------------------
         def interp_data_to_day(self,data_monthly,my_weights):
