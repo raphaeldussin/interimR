@@ -116,3 +116,38 @@ def write_ncfile(lon_array,lat_array,time,var,dict_wrt):
 	fid.close()
 	return None
 
+def write_lsm(lon_array,lat_array,var,dict_wrt):
+	fid = nc.Dataset(dict_wrt['fileout'], 'w', format='NETCDF3_CLASSIC')
+        fid.description = dict_wrt['description']
+	# dimensions
+	fid.createDimension(dict_wrt['dim_lat'], lat_array.shape[0])
+	fid.createDimension(dict_wrt['dim_lon'], lon_array.shape[0])
+	# variables
+	latitudes  = fid.createVariable(dict_wrt['var_lat'], 'f8', (dict_wrt['dim_lat'],))
+	longitudes = fid.createVariable(dict_wrt['var_lon'], 'f8', (dict_wrt['dim_lon'],))
+	variable   = fid.createVariable(dict_wrt['var_lsm'], 'i4', (dict_wrt['dim_lat'],dict_wrt['dim_lon'],))
+
+	# attributes
+	longitudes.units = "degrees_east"
+	longitudes.valid_min = lon_array.min()
+	longitudes.valid_max = lon_array.max()
+	longitudes.long_name = "longitude"
+	
+	latitudes.units = "degrees_north"
+	latitudes.valid_min = lat_array.min()
+	latitudes.valid_max = lat_array.max()
+	latitudes.long_name = "latitude"
+	
+	variable.long_name = dict_wrt['long name']
+	variable.units = dict_wrt['units']
+	variable.coordinates = dict_wrt['dim_lat'] + ' ' + dict_wrt['dim_lon']
+	variable.valid_range = var.min() , var.max()
+	
+	# data
+	latitudes[:]    = lat_array
+	longitudes[:]   = lon_array
+	variable[:,:]   = var
+	
+	# close
+	fid.close()
+	return None

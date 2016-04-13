@@ -1,0 +1,54 @@
+#!/usr/bin/env python
+
+import os
+from ecmwfapi import ECMWFDataServer
+import interimR.lib_ioncdf as ioncdf
+import numpy as np
+
+server = ECMWFDataServer()
+server.retrieve({
+    "class": "ei",
+    "dataset": "interim",
+    "date": "1989-01-01",
+    "expver": "1",
+    "grid": "av",
+    "levtype": "sfc",
+    "param": "172.128",
+    "step": "0",
+    "stream": "oper",
+    "time": "12:00:00",
+    "type": "an",
+    "target": "lsm_ERAinterim.grib",
+})
+
+# comand to run to convert to NC :
+convert_to_nc='cdo -R -t ecmwf -f nc -r copy ' + 'lsm_ERAinterim.grib' + ' ' + 'lsm_ERAinterim_original.nc'
+os.system(convert_to_nc)
+
+# Read original land sea mask
+fidlsm = ioncdf.opennc('lsm_ERAinterim_original.nc')
+lsm = ioncdf.readnc(fidlsm,'LSM')
+lon = ioncdf.readnc(fidlsm,'lon')
+lat = ioncdf.readnc(fidlsm,'lat')
+ioncdf.closenc(fidlsm)
+
+# Make changes to lsm to make it binary
+lsmtmp = 1. - lsm
+lsmout = lsmtmp.copy()
+threshold = 1.0
+lsmout =  np.zeros((256,512))
+lsmout[np.where(lsmtmp >= threshold )] = 1
+
+# Define dim/variables/attributes for various lsm
+dict_nemo = {'fileout':'lsm_erainterim.nc','description':'ERAinterim land sea mask, NEMO version', \
+             'dim_lat':'lat0','dim_lon':'lon0','var_lat':'lat0','var_lon':'lon0','var_lsm':'lsm', \
+             'long name':'Land Sea Mask','units':''}
+
+dict_roms = {'fileout':'lsm_erainterim_roms.nc','description':'ERAinterim land sea mask, ROMS version', \
+             'dim_lat':'lat','dim_lon':'lon','var_lat':'lat','var_lon':'lon','var_lsm':'lsm', \
+             'long name':'Land Sea Mask','units':''}
+
+# Write the nemo lsm
+ioncdf.write_lsm(lon,lat,lsmout,dict_nemo)
+# Write the roms lsm
+ioncdf.write_lsm(lon,lat[::-1],lsmout[::-1,:],dict_roms)
