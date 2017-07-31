@@ -6,3 +6,12 @@ longwave_factor   = ./data/DFS5.2/radiative/smoothed_ratio_radlw.nc
 t2_poles_offset   = ./data/DFS5.2/temperature/monthly_offset.nc
 ice_nsidc         = ./data/DFS5.2/temperature/NSIDC_ice_fraction_monthly_clim_y1979-1998.nc
 mask              = ./data/masks/lsm_ERAinterim_roms.nc
+
+[RD-proteus2]
+u10_background    = ./data/DFS5.2/winds/correction_u10.nc
+v10_background    = ./data/DFS5.2/winds/correction_v10.nc
+shortwave_factor  = ./data/DFS5.2/radiative/smoothed_ratio_radsw.nc
+longwave_factor   = ./data/DFS5.2/radiative/smoothed_ratio_radlw.nc
+t2_poles_offset   = ./data/DFS5.2/temperature/monthly_offset.nc
+ice_nsidc         = ./data/DFS5.2/temperature/NSIDC_ice_fraction_monthly_clim_y1979-1998.nc
+mask              = ./data/masks/lsm_ERAinterim.nc

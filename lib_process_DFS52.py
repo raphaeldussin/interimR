@@ -536,7 +536,9 @@ class DFS52_processing():
 			q_sat_new = humidity_toolbox.qsat_from_t2_and_msl(t2_new,msl)
 			q_sat_old = humidity_toolbox.qsat_from_t2_and_msl(t2_old,msl)
 			# compute new specific humidity
-			q2_out[kt,:,:] = (q2_tmp[:,:] * q_sat_new / q_sat_old) * self.lsm[:,:]
+			q2_tmp[:,:] = (q2_tmp[:,:] * q_sat_new / q_sat_old)
+			q2_tmp[np.where(self.lsm[:,:] == 0)] = 0.
+			q2_out[kt,:,:] = q2_tmp[:,:]
 
                 # output file informations
 		if self.target_model == 'ROMS':

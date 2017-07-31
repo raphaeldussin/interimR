@@ -22,7 +22,7 @@ import sys
 try:
         this_user = sys.argv[1]
 except:
-        print 'You must provide a user options entry for this script' ; exit()
+        print 'Please provide a user.opts entry to this script' ; exit()
 
 # open the parser and read the info on the run
 config = ConfigParser.ConfigParser()
