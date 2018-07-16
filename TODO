@@ -1,0 +1,8 @@
+
+change all functions to be like process_t2 done !
+
+function for time : done !
+
+change all functions in DFS5.2 to be like t2
+
+replace the netcdf I/O by xarray
