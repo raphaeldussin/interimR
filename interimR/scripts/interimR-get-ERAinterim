@@ -21,7 +21,7 @@ except:
     print('sudo pip install https://software.ecmwf.int/wiki/download/attachments/47287906/ecmwf-api-client-python.tgz')
     print('then create $HOME/.ecmwfapirc and copy registration key in it')
 import numpy as np
-import ConfigParser
+import configparser
 import os
 import sys
 
@@ -32,7 +32,7 @@ except:
 
 # open the parser and read the info on the run
 homedir = os.path.expanduser('~')
-config = ConfigParser.ConfigParser()
+config = configparser.ConfigParser()
 config.read(homedir + '/.interimR/user.opts')
 
 dict_ctl = {}

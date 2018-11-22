@@ -2,7 +2,7 @@
 
 from interimR.lib_process_DFS52 import DFS52_processing
 import numpy as np
-import ConfigParser
+import configparser
 import sys
 import os
 
@@ -13,7 +13,7 @@ except:
 
 # open the parser and read the info on the job
 homedir = os.path.expanduser('~')
-config = ConfigParser.ConfigParser()
+config = configparser.ConfigParser()
 config.read(homedir + '/.interimR/user.opts')
 
 dict_ctl = {}
@@ -22,7 +22,7 @@ for item in config.options(this_user):
     dict_ctl[item] = config.get(this_user,item)
 
 # get variables names for specified model
-varnames = ConfigParser.ConfigParser()
+varnames = configparser.ConfigParser()
 varnames.read(homedir + '/.interimR/model.variables')
 
 for item in varnames.options(dict_ctl['target_model']):
@@ -40,7 +40,7 @@ else:
     exit('Unrecognized value for drown_files, must be either True or False')
 
 # read dfs.datafiles
-datafiles = ConfigParser.ConfigParser()
+datafiles = configparser.ConfigParser()
 datafiles.read(homedir + '/.interimR/dfs.datafiles')
 
 dict_datafiles = {}
