@@ -1,25 +1,6 @@
-#-----------------------------------------------------------------------------------------------------
-# pre-req :
+Not up to date!
 
-1. A python3 environment:
-
-```conda install numpy netcdf4 configparser```
-
-2. The ECMWFserver python package :
-
-doc : https://software.ecmwf.int/wiki/display/WEBAPI/Accessing+ECMWF+data+servers+in+batch
-
-in short, needs to register, install pip (if you don't have it already) then :
-sudo pip install https://software.ecmwf.int/wiki/download/attachments/47287906/ecmwf-api-client-python.tgz
-
-put key in .ecmwfapirc in $HOME
-
-3. cdo
-
-#-----------------------------------------------------------------------------------------------------
-# prepare fortran tools
-
-make
+see documentation at https://interimr.readthedocs.io/en/latest/index.html
 
 #-----------------------------------------------------------------------------------------------------
 # setup your options
