@@ -35,9 +35,20 @@ sosie_dir         = /opt/esm-soft/sosie/bin/
 first_year        =
 last_year         =
 target_model      = NEMO
-original_grib_dir = 
-original_nc_dir   = 
-processed_nc_dir  = 
-dfs52_output_dir  = 
+original_grib_dir =
+original_nc_dir   =
+processed_nc_dir  =
+dfs52_output_dir  =
 lsm_file          =
 sosie_dir         =
+
+[RD-laptop]
+first_year        = 2017
+last_year         = 2017
+target_model      = NEMO
+original_grib_dir = /Users/raphael/STORAGE/ERAinterim/grib/
+original_nc_dir   = /Users/raphael/STORAGE/ERAinterim/nc/
+processed_nc_dir  = /Users/raphael/STORAGE/ERAinterim/nc_processed_nemo/
+dfs52_output_dir  = /Volumes/P4/workdir/raphael/DFS5.2/NEMO/
+lsm_file          = ./data/masks/lsm_erainterim.nc
+sosie_dir         = /Users/raphael/TOOLS/sosie/bin/

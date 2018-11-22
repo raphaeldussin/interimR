@@ -3,7 +3,7 @@
 from lib_process_ERAinterim import ERAinterim_processing
 import numpy as np
 import ConfigParser
-import sys 
+import sys
 
 try:
 	this_user = sys.argv[1]

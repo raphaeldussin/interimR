@@ -3,7 +3,7 @@
 from lib_drown import drown
 import numpy as np
 import ConfigParser
-import sys 
+import sys
 
 try:
 	this_user = sys.argv[1]
