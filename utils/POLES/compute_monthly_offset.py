@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import netCDF4 as nc 
+import netCDF4 as nc
 import numpy as np
 import lib_brodeau as lolo
 import drown_kara as drown
@@ -46,8 +46,8 @@ nt, ny, nx = t2_POLES.shape
 idx_70N = (np.abs(lat - 70)).argmin()
 idx_65N = (np.abs(lat - 65)).argmin()
 
-print idx_70N, lat[idx_70N]
-print idx_65N, lat[idx_65N]
+print(idx_70N, lat[idx_70N])
+print(idx_65N, lat[idx_65N])
 #
 offset_orig = np.empty((ny,nx))
 offset_tmp  = np.empty((ny,nx))
@@ -56,7 +56,7 @@ offset_out = np.empty((nt,ny,nx))
 
 for month in np.arange(nt):
 	# compute original offset
-	offset_orig[:,:] = t2_POLES[month,:,:] - t2_ERAint[month,:,:] 
+	offset_orig[:,:] = t2_POLES[month,:,:] - t2_ERAint[month,:,:]
 	# make a working copy
 	offset_tmp[:,:] = offset_orig[:,:].copy()
 	# drown
@@ -80,7 +80,7 @@ for month in np.arange(nt):
 	# mask land
 	offset_tmp[np.where(lsm == 0)] = spval
 
-	offset_out[month,:,:] = offset_tmp[:,:] 
+	offset_out[month,:,:] = offset_tmp[:,:]
 
 
 # remove extreme positive values

@@ -56,7 +56,6 @@ for year in np.arange(first_year,last_year+1):
 	for month in np.arange(12):
 		ffm = ndays[:month].sum() * nfpd      # first frame of month
 		lfm = ndays[:month+1].sum() * nfpd    # last frame of month
-		#print month, ffm , lfm
 		nframes_sum[month] = nframes_sum[month] + (lfm - ffm)
 		t2_monthly_sum[month,:,:] = t2_monthly_sum[month,:,:] + fid_in.variables[var_name_t2][ffm:lfm,:,:].sum(axis=0)
 	fid_in.close()

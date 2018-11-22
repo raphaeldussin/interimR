@@ -37,7 +37,7 @@ class DFS52_processing():
 
 		self.nframes = self.ndays * self.nframes_per_day
 		
-		print self.year, 'has', self.nframes, 'frames'
+		print(self.year, 'has', self.nframes, 'frames')
 
 		self.drown = drown
 		if self.drown:
@@ -49,40 +49,40 @@ class DFS52_processing():
 		self.lsm = ioncdf.readnc(fid_lsm,'lsm')
 		ioncdf.closenc(fid_lsm)
 
-		print self.name_t2
-		print self.name_time_t2
+		print(self.name_t2)
+		print(self.name_time_t2)
 		return None
 
 	def __call__(self):
-		if self.dict_input.has_key('file_precip'):
-			print 'Rewrite precip file...'
+		if 'file_precip' in self.dict_input:
+			print('Rewrite precip file...')
 			self.process_precip_file()
-		if self.dict_input.has_key('file_snow'):
-			print 'Rewrite snow file...'
+		if 'file_snow' in self.dict_input:
+			print('Rewrite snow file...')
 			self.process_snow_file()
-		if self.dict_input.has_key('file_radlw'):
-			print 'Create DFS5.2 longwave file...'
+		if 'file_radlw' in self.dict_input:
+			print('Create DFS5.2 longwave file...')
 			self.process_radlw_file()
-		if self.dict_input.has_key('file_radsw'):
-			print 'Create DFS5.2 shortwave file...'
+		if 'file_radsw' in self.dict_input:
+			print('Create DFS5.2 shortwave file...')
 			self.process_radsw_file()
-		if self.dict_input.has_key('file_t2'):
-			print 'Create DFS5.2 t2 file...'
+		if 'file_t2' in self.dict_input:
+			print('Create DFS5.2 t2 file...')
 			self.process_t2_file()
-		if self.dict_input.has_key('file_q2'):
-			print 'Create DFS5.2 q2 file...'
+		if 'file_q2' in self.dict_input:
+			print('Create DFS5.2 q2 file...')
 			self.process_q2_file()
-		if self.dict_input.has_key('file_msl'):
-			print 'Rewrite msl file...'
+		if 'file_msl' in self.dict_input:
+			print('Rewrite msl file...')
 			self.process_msl_file()
-		if self.dict_input.has_key('file_tcc'):
-			print 'Rewrite tcc file...'
+		if 'file_tcc' in self.dict_input:
+			print('Rewrite tcc file...')
 			self.process_tcc_file()
-		if self.dict_input.has_key('file_u10'):
-			print 'Create DFS5.2 u10 file...'
+		if 'file_u10' in self.dict_input:
+			print('Create DFS5.2 u10 file...')
 			self.process_u10_file()
-		if self.dict_input.has_key('file_v10'):
-			print 'Create DFS5.2 v10 file...'
+		if 'file_v10' in self.dict_input:
+			print('Create DFS5.2 v10 file...')
 			self.process_v10_file()
 		return None
 
@@ -638,7 +638,7 @@ class DFS52_processing():
                 # time interpolation of bias file
                 nt,ny,nx = data_monthly.shape
                 if ( nt != 12):
-                        print 'Error : number of frames'
+                        print('Error : number of frames')
                 data_thisday = np.zeros((ny,nx))
                 for kt in np.arange(12):
                         data_thisday = data_thisday + data_monthly[kt,:,:] * my_weights[kt]
