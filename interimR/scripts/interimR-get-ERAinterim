@@ -13,13 +13,13 @@
 #
 # R.Dussin 2014 - adapt script to download ERAinterim
 try:
-	from ecmwfapi import ECMWFDataServer
+    from ecmwfapi import ECMWFDataServer
 except:
-	print 'ECMWF package not found, please visit '
-	print 'https://software.ecmwf.int/wiki/display/WEBAPI/Accessing+ECMWF+data+servers+in+batch'
-	print 'you need to register, install the package '
-	print 'sudo pip install https://software.ecmwf.int/wiki/download/attachments/47287906/ecmwf-api-client-python.tgz'
-	print 'then create $HOME/.ecmwfapirc and copy registration key in it'
+    print 'ECMWF package not found, please visit '
+    print 'https://software.ecmwf.int/wiki/display/WEBAPI/Accessing+ECMWF+data+servers+in+batch'
+    print 'you need to register, install the package '
+    print 'sudo pip install https://software.ecmwf.int/wiki/download/attachments/47287906/ecmwf-api-client-python.tgz'
+    print 'then create $HOME/.ecmwfapirc and copy registration key in it'
 import numpy as np
 import ConfigParser
 import os
@@ -53,28 +53,28 @@ server = ECMWFDataServer()
 
 for year in np.arange(fyear,lyear+1):
 
-	for key in ecmwf_param.keys():
+    for key in ecmwf_param.keys():
 
-		print 'working on variable', key, ' for year ', str(year)
-		filegrib = dict_ctl['original_grib_dir'] + key + '_ERAinterim_' + str(year) + '.grib'
-		filenc   = dict_ctl['original_nc_dir']   + key + '_ERAinterim_' + str(year) + '.nc'
+        print 'working on variable', key, ' for year ', str(year)
+        filegrib = dict_ctl['original_grib_dir'] + key + '_ERAinterim_' + str(year) + '.grib'
+        filenc   = dict_ctl['original_nc_dir']   + key + '_ERAinterim_' + str(year) + '.nc'
 
-		server.retrieve({
-		    'stream'    : "oper",
-		    'levtype'   : "sfc",
-	            'resol'      : "av",
-		    'param'     : ecmwf_param[key],
-		    'dataset'   : "interim",
-		    'step'      : "3/6/9/12",
-		    'time'      : "00/12",
-		    'date'      : str(year) + "-01-01/to/" + str(year) + "-12-31",
-		    'type'      : "fc",
-		    'class'     : "ei",
-		    'target'    : filegrib
-		})
+        server.retrieve({
+            'stream'    : "oper",
+            'levtype'   : "sfc",
+                'resol'      : "av",
+            'param'     : ecmwf_param[key],
+            'dataset'   : "interim",
+            'step'      : "3/6/9/12",
+            'time'      : "00/12",
+            'date'      : str(year) + "-01-01/to/" + str(year) + "-12-31",
+            'type'      : "fc",
+            'class'     : "ei",
+            'target'    : filegrib
+        })
 
-		# comand to run to convert to NC :
-		convert_to_nc='cdo -R -t ecmwf -f nc -r copy ' + filegrib + ' ' + filenc
-		os.system(convert_to_nc)
+        # comand to run to convert to NC :
+        convert_to_nc='cdo -R -t ecmwf -f nc -r copy ' + filegrib + ' ' + filenc
+        os.system(convert_to_nc)
 
 
