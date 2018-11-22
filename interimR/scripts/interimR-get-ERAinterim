@@ -15,11 +15,11 @@
 try:
     from ecmwfapi import ECMWFDataServer
 except:
-    print 'ECMWF package not found, please visit '
-    print 'https://software.ecmwf.int/wiki/display/WEBAPI/Accessing+ECMWF+data+servers+in+batch'
-    print 'you need to register, install the package '
-    print 'sudo pip install https://software.ecmwf.int/wiki/download/attachments/47287906/ecmwf-api-client-python.tgz'
-    print 'then create $HOME/.ecmwfapirc and copy registration key in it'
+    print('ECMWF package not found, please visit ')
+    print('https://software.ecmwf.int/wiki/display/WEBAPI/Accessing+ECMWF+data+servers+in+batch')
+    print('you need to register, install the package ')
+    print('sudo pip install https://software.ecmwf.int/wiki/download/attachments/47287906/ecmwf-api-client-python.tgz')
+    print('then create $HOME/.ecmwfapirc and copy registration key in it')
 import numpy as np
 import ConfigParser
 import os

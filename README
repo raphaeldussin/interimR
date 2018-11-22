@@ -1,7 +1,9 @@
 #-----------------------------------------------------------------------------------------------------
 # pre-req :
 
-1. A working python environment (including numpy, netCDF4)
+1. A python3 environment:
+
+```conda install numpy netcdf4 configparser```
 
 2. The ECMWFserver python package :
 
@@ -27,19 +29,19 @@ you need to provide path to where you want to store the data,
 which years to process and for what is the target model (changes variable names,...)
 
 #-----------------------------------------------------------------------------------------------------
-# retrieve ERAinterim 
+# retrieve ERAinterim
 
 ./get_ERAinterim.py myentry
 
 # example ./get_ERAinterim.py RD-triton
 #-----------------------------------------------------------------------------------------------------
-# process ERAinterim 
+# process ERAinterim
 
 ./process_ERAinterim.py myentry
 
 # example ./process_ERAinterim.py RD-triton
 #-----------------------------------------------------------------------------------------------------
-# drown ERAinterim 
+# drown ERAinterim
 
 ./drown_ERAinterim.py myentry
 
