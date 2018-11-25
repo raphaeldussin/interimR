@@ -11,6 +11,7 @@ interimR: an interim foRcing package!
    :caption: Contents:
 
    install
+   usage
 
 
 Indices and tables
